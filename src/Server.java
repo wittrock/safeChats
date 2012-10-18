@@ -6,38 +6,52 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Server {
-    private static final int PORT = 78655;
-    private synchronized Vector<Chatter> chatters;
-    private synchronized LinkedBlockingQueue<String> writeBuffer();
+    private static final int PORT = 46754;
+    private List<Chatter> chatters;
+    private LinkedBlockingQueue<String> writeBuffer;
 
-    
+    public Server() {
+	chatters = Collections.synchronizedList(new ArrayList());
+	writeBuffer = new LinkedBlockingQueue<String>();
+
+	try{
+	    ServerSocketFactory f = SSLServerSocketFactory.getDefault();
+	    ServerSocket ss = f.createServerSocket(PORT);
+
+	    int numChatters = 0;
+
+	    BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer);
+	
+	    bufferPusher.run();
+	
+	    while(true) {
+		Socket s = ss.accept();
+		chatters.add(new Chatter(Integer.toString(numChatters),
+					 new ChatterReader(this, s),
+					 new ChatterWriter(this, s)));
+	    
+	    }
+	} catch (Exception e) {
+	    e.printStackTrace();
+	    return;
+	}
+    }
+
+    public void addMessage(String str) { 
+	synchronized(writeBuffer) {
+	    try {
+		writeBuffer.put(str);
+	    } catch (InterruptedException e) {
+		e.printStackTrace();
+	    }
+	}
+    }
+
 
     public static void main(String[] args) { 
-	chatters = new Vector<Chatter>();
-	ServerSocketFactory f = SSLServerSocketFactory.getDefault();
-	ServerSocket ss = f.createServerSocket(PORT);
-	int chatters = 0;
-
-	Thread bufferPusher = new Thread(){
-		public void run(){
-		    while(true) {
-			String str = writeBuffer.take();
-			for(Chatter c : chatters) {
-			    Chatter.addMessage(str);
-			}
-		    }
-		}
-	    }
-
-	while(true) {
-	    Socket s = ss.accept();
-	    chatters.add(new Chatter(Integer.toString(chatters),
-				     new ChatterReader(this, s),
-				     new ChatterWriter(this, s)));
-
-	    
-	}
+	Server server = new Server();
     }
 }

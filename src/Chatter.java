@@ -2,8 +2,8 @@
 public class Chatter {
     String name;
     //add list of rooms here later.
-    ChatterWriter reader;
-    ChatterReader writer;
+    ChatterWriter writer;
+    ChatterReader reader;
     
     public void addMessage(String str) {
 	writer.addMessage(str);
