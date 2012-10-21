@@ -14,44 +14,44 @@ public class Server {
     private LinkedBlockingQueue<String> writeBuffer;
 
     public Server() {
-	chatters = Collections.synchronizedList(new ArrayList());
-	writeBuffer = new LinkedBlockingQueue<String>();
-
-	try{
-	    ServerSocketFactory f = SSLServerSocketFactory.getDefault();
-	    ServerSocket ss = f.createServerSocket(PORT);
-
-	    int numChatters = 0;
-
-	    BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer);
+		chatters = Collections.synchronizedList(new ArrayList<Chatter>());
+		writeBuffer = new LinkedBlockingQueue<String>();
 	
-	    bufferPusher.run();
+		try{
+		    ServerSocketFactory f = SSLServerSocketFactory.getDefault();
+		    ServerSocket ss = f.createServerSocket(PORT);
 	
-	    while(true) {
-		Socket s = ss.accept();
-		chatters.add(new Chatter(Integer.toString(numChatters),
-					 new ChatterReader(this, s),
-					 new ChatterWriter(this, s)));
-	    
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	    return;
-	}
+		    int numChatters = 0;
+	
+		    BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer);
+		
+		    bufferPusher.run();
+		
+		    while(true) {
+			Socket s = ss.accept();
+			chatters.add(new Chatter(Integer.toString(numChatters),
+						 new ChatterReader(this, s),
+						 new ChatterWriter(this, s)));
+		    
+		    }
+		} catch (Exception e) {
+		    e.printStackTrace();
+		    return;
+		}
     }
 
     public void addMessage(String str) { 
 	synchronized(writeBuffer) {
 	    try {
-		writeBuffer.put(str);
+	    	writeBuffer.put(str);
 	    } catch (InterruptedException e) {
-		e.printStackTrace();
+	    	e.printStackTrace();
 	    }
 	}
     }
 
 
     public static void main(String[] args) { 
-	Server server = new Server();
+    	Server server = new Server();
     }
 }

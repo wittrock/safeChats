@@ -13,8 +13,8 @@ public abstract class ChatterHandler implements Runnable {
     Server server;
 
     public ChatterHandler(Server server, Socket sock){
-	this.server = server;
-	this.sock = sock;
+    	this.server = server;
+    	this.sock = sock;
     }
 
     public abstract void run();
