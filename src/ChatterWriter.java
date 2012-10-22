@@ -31,7 +31,9 @@ public class ChatterWriter extends ChatterHandler {
 	
 		    while(true) {
 				str = writeBuffer.take();
+				System.out.println("ChatterWriter: got a message -- " + str);
 				w.write(str + '\n');
+				w.flush();
 		    }
 	
 		} catch(Exception e) {

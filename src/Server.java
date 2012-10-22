@@ -41,14 +41,14 @@ public class Server {
 	}
 
 	public void addMessage(String str) { 
-		synchronized(writeBuffer) {
+				synchronized(writeBuffer) {
 			try {
 				System.out.println("Got a message!");
 				writeBuffer.put(str);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+				}
 	}
 
 

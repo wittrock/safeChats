@@ -39,9 +39,8 @@ public class Client {
 		System.out.println("SendMessage called!");
 		try{
 			typedWriter.write(str+"\n");
-			System.out.println("Wrote to socket");
 			typedWriter.flush();
-			System.out.println("Flushed socket");
+			System.out.println("Flushed socket: " + str);
 		}catch (Exception e) {
 			System.out.println("Caught exception in sendMessage");
 			e.printStackTrace();
