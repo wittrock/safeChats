@@ -6,9 +6,11 @@ import java.net.Socket;
 public class ClientMessageListener implements Runnable {
 	
 	private BufferedReader messageReader;
+	private GUI_ChatInterface gci;
 	
-	public ClientMessageListener(Socket s){
+	public ClientMessageListener(Socket s,GUI_ChatInterface gci){
 		try{
+			this.gci = gci;
 			messageReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		}catch (Exception e) {
 		    e.printStackTrace();
@@ -20,8 +22,7 @@ public class ClientMessageListener implements Runnable {
 		try{
 			String str = null;
 			while((str=messageReader.readLine())!=null){
-				System.out.println(str);
-				System.out.flush();
+				gci.addChatText(str);
 			}
 		}catch(Exception e){
 			e.printStackTrace();

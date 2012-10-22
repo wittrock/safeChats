@@ -36,8 +36,8 @@ public class ChatterWriter extends ChatterHandler {
 		    String str = null;
 	
 		    while(true) {
-			str = writeBuffer.take();
-			w.write(str + '\n');
+				str = writeBuffer.take();
+				w.write(str + '\n');
 		    }
 	
 		} catch(Exception e) {

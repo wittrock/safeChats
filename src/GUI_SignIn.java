@@ -1,0 +1,63 @@
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
+import javax.swing.JPasswordField;
+
+
+public class GUI_SignIn extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3481153769518892625L;
+	private JTextField textField;
+	private JPasswordField passwordField;
+	public GUI_SignIn() {
+		setTitle("SafeChats-Sign In");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setFont(new Font("Tunga", Font.PLAIN, 12));
+		getContentPane().setLayout(null);
+		
+		JLabel lblNewLabel = new JLabel("User Name:");
+		lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblNewLabel.setBounds(29, 75, 73, 24);
+		getContentPane().add(lblNewLabel);
+		
+		JLabel lblNewLabel_1 = new JLabel("Password:");
+		lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		lblNewLabel_1.setBounds(29, 110, 73, 24);
+		getContentPane().add(lblNewLabel_1);
+		
+		textField = new JTextField();
+		textField.setBounds(112, 78, 151, 20);
+		getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JLabel lblNew = new JLabel("New?");
+		lblNew.setBounds(46, 29, 46, 14);
+		getContentPane().add(lblNew);
+		
+		JButton btnClickHere = new JButton("Click Here");
+		btnClickHere.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnClickHere.setBounds(84, 29, 79, 19);
+		getContentPane().add(btnClickHere);
+		
+		JButton btnSignIn = new JButton("Sign In");
+		btnSignIn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		btnSignIn.setBounds(112, 144, 89, 23);
+		getContentPane().add(btnSignIn);
+		
+		passwordField = new JPasswordField();
+		passwordField.setBounds(112, 110, 151, 23);
+		getContentPane().add(passwordField);
+	}
+}
