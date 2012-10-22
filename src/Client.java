@@ -18,29 +18,34 @@ public class Client {
 			typedWriter = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 			
 		}catch (Exception e) {
-		    e.printStackTrace();
-		    return;
+			e.printStackTrace();
+			return;
 		}
 	}
 	
 	public void runChat(GUI_ChatInterface gci){
 		try{
-			
+			System.out.println("Running chat");
 			ClientMessageListener cml = new ClientMessageListener(s,gci);
-			cml.run();
+			(new Thread(cml)).start();
+			System.out.println("Spun off  chat");
 		}catch (Exception e) {
-		    e.printStackTrace();
-		    return;
+			e.printStackTrace();
+			return;
 		}
 	}
 	
 	public void sendMessage(String str){
+		System.out.println("SendMessage called!");
 		try{
 			typedWriter.write(str+"\n");
+			System.out.println("Wrote to socket");
 			typedWriter.flush();
+			System.out.println("Flushed socket");
 		}catch (Exception e) {
-		    e.printStackTrace();
-		    return;
+			System.out.println("Caught exception in sendMessage");
+			e.printStackTrace();
+			return;
 		}
 	}
 	
@@ -48,6 +53,8 @@ public class Client {
 		Client c = new Client();
 		GUI_ChatInterface gci = new GUI_ChatInterface(c);
 		gci.setVisible(true);
+		System.out.println("Calling runChat()...");
 		c.runChat(gci);
+		System.out.println("Called runChat()...");
 	}
 }

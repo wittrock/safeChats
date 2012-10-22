@@ -19,6 +19,7 @@ public class ClientMessageListener implements Runnable {
 	}
 		
 	public void run(){	
+		System.out.println("ClientMessageListener starting to run...");
 		try{
 			String str = null;
 			while((str=messageReader.readLine())!=null){

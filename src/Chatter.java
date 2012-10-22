@@ -13,6 +13,8 @@ public class Chatter {
 	this.name = name;
 	this.reader = reader;
 	this.writer = writer;
-	
+	(new Thread(this.writer)).start();
+	(new Thread(this.reader)).start();
+	System.out.println("Started a new Chatter " + name);
     }
 }

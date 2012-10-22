@@ -12,6 +12,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.Dimension;
 
 
 public class GUI_ChatInterface extends JFrame {
@@ -37,6 +38,7 @@ public class GUI_ChatInterface extends JFrame {
 	
 	public GUI_ChatInterface(Client c) {
 		client = c;
+		this.setSize(new Dimension(900, 600));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("SafeChats");
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
