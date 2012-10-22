@@ -1,11 +1,5 @@
 import java.io.*;
-import java.util.*;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
 import java.net.Socket;
-import javax.net.ServerSocketFactory;
-import javax.net.ssl.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class ChatterWriter extends ChatterHandler {

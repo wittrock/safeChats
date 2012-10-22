@@ -13,8 +13,17 @@ public class GUI_SignIn extends JFrame {
 	 * 
 	 */
 	private static final long serialVersionUID = -3481153769518892625L;
-	private JTextField textField;
+	private JTextField userNameField;
 	private JPasswordField passwordField;
+	
+	private void attemptAuth(){
+		
+	}
+	
+	private void createNew(){
+		
+	}
+	
 	public GUI_SignIn() {
 		setTitle("SafeChats-Sign In");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,26 +40,28 @@ public class GUI_SignIn extends JFrame {
 		lblNewLabel_1.setBounds(29, 110, 73, 24);
 		getContentPane().add(lblNewLabel_1);
 		
-		textField = new JTextField();
-		textField.setBounds(112, 78, 151, 20);
-		getContentPane().add(textField);
-		textField.setColumns(10);
+		userNameField = new JTextField();
+		userNameField.setBounds(112, 78, 151, 20);
+		getContentPane().add(userNameField);
+		userNameField.setColumns(10);
 		
 		JLabel lblNew = new JLabel("New?");
-		lblNew.setBounds(46, 29, 46, 14);
+		lblNew.setBounds(69, 29, 32, 14);
 		getContentPane().add(lblNew);
 		
 		JButton btnClickHere = new JButton("Click Here");
 		btnClickHere.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				createNew();
 			}
 		});
-		btnClickHere.setBounds(84, 29, 79, 19);
+		btnClickHere.setBounds(102, 27, 79, 19);
 		getContentPane().add(btnClickHere);
 		
 		JButton btnSignIn = new JButton("Sign In");
 		btnSignIn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				attemptAuth();
 			}
 		});
 		btnSignIn.setBounds(112, 144, 89, 23);

@@ -4,6 +4,8 @@ import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JPasswordField;
 import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class GUI_CreateAccount extends JFrame {
@@ -14,6 +16,11 @@ public class GUI_CreateAccount extends JFrame {
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JPasswordField passwordField_1;
+	
+	private void createAcc(){
+		
+	}
+	
 	public GUI_CreateAccount() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("SafeChats-New Account");
@@ -49,6 +56,11 @@ public class GUI_CreateAccount extends JFrame {
 		getContentPane().add(lblReenterPassword);
 		
 		JButton btnCreateAccount = new JButton("Create Account");
+		btnCreateAccount.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				createAcc();
+			}
+		});
 		btnCreateAccount.setBounds(152, 149, 141, 23);
 		getContentPane().add(btnCreateAccount);
 	}
