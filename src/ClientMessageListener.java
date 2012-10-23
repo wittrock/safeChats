@@ -23,7 +23,7 @@ public class ClientMessageListener implements Runnable {
 		try{
 			String str = null;
 			while((str=messageReader.readLine())!=null){
-				gci.addChatText(str);
+				gci.addChatText(str + "\n");
 			}
 		}catch(Exception e){
 			e.printStackTrace();

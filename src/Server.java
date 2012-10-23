@@ -28,8 +28,9 @@ public class Server {
 			while(true) {
 				Socket s = ss.accept();
 				System.out.println("Got a new connection!");
-				chatters.add(new Chatter(Integer.toString(numChatters),
-							 new ChatterReader(this, s),
+				String name = Integer.toString(numChatters);
+				chatters.add(new Chatter(name,
+							 new ChatterReader(this, s, name),
 							 new ChatterWriter(this, s)));
 				numChatters++;
 		    
@@ -41,14 +42,14 @@ public class Server {
 	}
 
 	public void addMessage(String str) { 
-				synchronized(writeBuffer) {
+		synchronized(writeBuffer) {
 			try {
 				System.out.println("Got a message!");
 				writeBuffer.put(str);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-				}
+		}
 	}
 
 
