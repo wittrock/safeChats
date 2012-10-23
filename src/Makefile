@@ -1,5 +1,5 @@
 all:
-	javac *.java -cp ./forms-1.3.0.jar:./com/jgoodies/forms/layout/:.
+	javac *.java -cp ../forms-1.3.0.jar:.
 
 runserver:
 	java -Djavax.net.ssl.keyStore=safeChats.keystore -Djavax.net.ssl.keyStorePassword=password Server
