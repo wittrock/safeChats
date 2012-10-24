@@ -104,7 +104,8 @@ public class GUI_ChatInterface extends JFrame {
 		userText = new JTextArea();
 		userText.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent arg0) {
-				if(arg0.getKeyCode()==KeyEvent.VK_ENTER){
+				if(arg0.getKeyChar()=='\n'){
+					userText.setText(userText.getText().replace("\n","" ));
 					sendUserText();
 				}
 			}
