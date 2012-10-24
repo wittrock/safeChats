@@ -1,3 +1,7 @@
+/*
+ * Greg Herpel, John Wittrock, 2012
+ */
+
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -22,13 +26,12 @@ public class Client {
 			return;
 		}
 	}
-	
+
+	/* This method spawns a thread to listen for messages */
 	public void runChat(GUI_ChatInterface gci){
 		try{
-			System.out.println("Running chat");
 			ClientMessageListener cml = new ClientMessageListener(s,gci);
 			(new Thread(cml)).start();
-			System.out.println("Spun off  chat");
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -47,13 +50,15 @@ public class Client {
 			return;
 		}
 	}
-	
+
+
+	/* 
+	 * Pretty simple class, this. Makes a new GUI, spawns a couple of threads, listens to chats, writes chats. 
+	 */	
 	public static void main(String[] args){
 		Client c = new Client();
 		GUI_ChatInterface gci = new GUI_ChatInterface(c);
 		gci.setVisible(true);
-		System.out.println("Calling runChat()...");
 		c.runChat(gci);
-		System.out.println("Called runChat()...");
 	}
 }
