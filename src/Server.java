@@ -3,25 +3,34 @@
  * This is the main class for the server end of things.
  */
 
-
 import java.util.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.security.*;
 
 public class Server {
 	private static final int PORT = 46754;
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
-	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out. 
+	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out
+	private Map<Integer, ChatRoom> rooms;
+	private SecureRandom random;
 
 	public Server() {
 		System.out.println("Started the server...");
-		//Should probably make the writebuffer synchronized too. Would solve a lot of potential threading problems.
 		chatters = Collections.synchronizedList(new ArrayList<Chatter>()); //Chatters is a synchronized list. 
+		rooms = Collections.synchronizedMap(new HashMap<Integer, ChatRoom>());
+		
 		writeBuffer = new LinkedBlockingQueue<String>();
-	
+		try {
+		random = SecureRandom.getInstance("SHA1PRNG");
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("Cannot instantiate SecureRandom with SHA1PRNG");
+			e.printStackTrace();
+		}	
+
 		try{
 			// Start accepting requests. 
 			ServerSocketFactory f = SSLServerSocketFactory.getDefault(); 
@@ -51,19 +60,63 @@ public class Server {
 		}
 	}
 
-
 	/*
 	 * The function that adds a message to the queue of this server. 
 	 * This will be moved to the ChatRoom in the next version.
 	 */
 	public void addMessage(String str) { 
-		synchronized(writeBuffer) { // Make sure we aren't going to screw anything. 
-			try {
-				writeBuffer.put(str);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+		try {
+			writeBuffer.put(str);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Chatter getChatterByName(String name) {
+		for (Chatter c : chatters) {
+			if (c.name.equals(name)) {
+				return c;
 			}
 		}
+		return null;
+	}
+
+	// MAJOR SECURITY FLAW HERE. MAKE SURE THAT THE CHATTER WAS INVITED FIRST
+	public boolean addChatterToRoom(Chatter c, int roomId) {
+		ChatRoom room = rooms.get(roomId);
+		if (room == null) {
+			return false;
+		}
+		
+		room.addChatter(c);
+		return true;
+	}
+
+	public boolean removeChatterFromRoom(Chatter c, int roomID) {
+		ChatRoom room = rooms.get(roomID);
+		if (room == null) {
+			return false;
+		}
+		
+		room.removeChatter(c);
+		return true;
+	}
+
+	public void createRoom(Chatter owner) {
+		int roomId;
+		while(true) {
+			roomId = random.nextInt();
+			if(!rooms.containsKey(roomId)) {
+				break;
+			}			
+		}
+
+		ChatRoom room = new ChatRoom(roomId, owner);
+		rooms.put(roomId, room);
+	}
+
+	public void removeRoom(int id) {
+		rooms.remove(id);
 	}
 
 	// This should very much be done with a direct reference for the sake of security.
@@ -76,7 +129,6 @@ public class Server {
 				break;
 			}
 		}
-
 		System.out.println("Removed a chatter. Num chatters: " + chatters.size());
 	}
 

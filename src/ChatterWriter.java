@@ -46,6 +46,7 @@ public class ChatterWriter extends ChatterHandler {
 				System.out.println("ChatterWriter: got a message -- " + str);
 				w.write(str + '\n');
 				w.flush();
+				System.out.println("ChatterWriter: sent a message -- " + str);
 			}
 	
 		} catch(Exception e) { /* Again, I know this sucks, but we wanted to get something out the door */

@@ -25,6 +25,7 @@ public class ClientMessageListener implements Runnable {
 			while((str=messageReader.readLine())!=null){
 				gci.addChatText(str + "\n");
 			}
+			System.out.println("Finished loop!");
 		}catch(Exception e){
 			e.printStackTrace();
 			return;

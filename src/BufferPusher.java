@@ -1,3 +1,9 @@
+/* 
+ * This is going to become more of a processing class than anything else. 
+ * This, or a closely-related class will actually have to parse status messages and perform 
+ * the necessary operations. Still more to do here. 
+ */ 
+
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 

@@ -39,7 +39,6 @@ public class Client {
 	}
 	
 	public void sendMessage(String str){
-		System.out.println("SendMessage called!");
 		try{
 			typedWriter.write(str+"\n");
 			typedWriter.flush();
