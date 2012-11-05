@@ -1,3 +1,8 @@
+/*
+ * Greg Herpel, John Wittrock, 2012
+ * This class reads incoming messages from the server and pushes to the buffer
+ */
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -6,11 +11,11 @@ import java.net.Socket;
 public class ClientMessageListener implements Runnable {
 	
 	private BufferedReader messageReader;
-	private GUI_ChatInterface gci;
+	private ClientBufferPusher cbp;
 	
-	public ClientMessageListener(Socket s,GUI_ChatInterface gci){
+	public ClientMessageListener(Socket s, ClientBufferPusher cbp){
 		try{
-			this.gci = gci;
+			this.cbp = cbp;
 			messageReader = new BufferedReader(new InputStreamReader(s.getInputStream()));
 		}catch (Exception e) {
 		    e.printStackTrace();
@@ -23,7 +28,7 @@ public class ClientMessageListener implements Runnable {
 		try{
 			String str = null;
 			while((str=messageReader.readLine())!=null){
-				gci.addChatText(str + "\n");
+				cbp.addMessage(str + "\n");
 			}
 			System.out.println("Finished loop!");
 		}catch(Exception e){

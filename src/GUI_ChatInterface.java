@@ -16,10 +16,9 @@ import java.awt.Dimension;
 
 
 public class GUI_ChatInterface extends JFrame {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2472179908152109439L;
+
+	private static final long serialVersionUID = 3115636304040322146L;
+	
 	
 	private JTextArea chatText;
 	private JTextArea userText;
@@ -38,17 +37,17 @@ public class GUI_ChatInterface extends JFrame {
 	
 	public GUI_ChatInterface(Client c) {
 		client = c;
-		this.setSize(new Dimension(900, 600));
+		this.setSize(new Dimension(481, 285));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("SafeChats");
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(256dlu;default):grow"),
+				ColumnSpec.decode("max(203dlu;default):grow"),
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(74dlu;default):grow"),},
+				ColumnSpec.decode("center:max(61dlu;pref):grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("default:grow"),
+				RowSpec.decode("max(14dlu;default):grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
@@ -62,14 +61,10 @@ public class GUI_ChatInterface extends JFrame {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(20dlu;default):grow"),}));
+				RowSpec.decode("max(39dlu;default):grow"),}));
 		
 		JPanel panel_1 = new JPanel();
-		getContentPane().add(panel_1, "4, 1, 1, 18, fill, fill");
+		getContentPane().add(panel_1, "4, 1, 1, 14, fill, fill");
 		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(88dlu;default)"),},
@@ -79,7 +74,7 @@ public class GUI_ChatInterface extends JFrame {
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		getContentPane().add(panel_2, "1, 1, 3, 18, fill, fill");
+		getContentPane().add(panel_2, "1, 1, 2, 14, fill, fill");
 		panel_2.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),},
@@ -93,10 +88,10 @@ public class GUI_ChatInterface extends JFrame {
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		getContentPane().add(panel, "1, 19, 3, 2, fill, fill");
+		getContentPane().add(panel, "1, 15, 2, 2, fill, fill");
 		panel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(216dlu;default):grow"),},
+				ColumnSpec.decode("max(172dlu;default):grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(28dlu;default):grow"),}));
@@ -118,7 +113,7 @@ public class GUI_ChatInterface extends JFrame {
 				sendUserText();
 			}
 		});
-		getContentPane().add(btnSend, "4, 20");
+		getContentPane().add(btnSend, "4, 16");
 	}
 
 }

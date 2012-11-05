@@ -25,6 +25,7 @@ public class GUI_SignIn extends JFrame {
 	}
 	
 	public GUI_SignIn() {
+		setResizable(false);
 		setTitle("SafeChats-Sign In");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setFont(new Font("Tunga", Font.PLAIN, 12));

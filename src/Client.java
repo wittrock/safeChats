@@ -1,5 +1,6 @@
 /*
  * Greg Herpel, John Wittrock, 2012
+ * This is the main class for the client
  */
 
 import java.io.BufferedWriter;
@@ -28,9 +29,9 @@ public class Client {
 	}
 
 	/* This method spawns a thread to listen for messages */
-	public void runChat(GUI_ChatInterface gci){
+	public void runChat(ClientBufferPusher cbp){
 		try{
-			ClientMessageListener cml = new ClientMessageListener(s,gci);
+			ClientMessageListener cml = new ClientMessageListener(s,cbp);
 			(new Thread(cml)).start();
 		}catch (Exception e) {
 			e.printStackTrace();
@@ -38,7 +39,7 @@ public class Client {
 		}
 	}
 	
-	public void sendMessage(String str){
+	public synchronized void sendMessage(String str){
 		try{
 			typedWriter.write(str+"\n");
 			typedWriter.flush();
@@ -56,8 +57,9 @@ public class Client {
 	 */	
 	public static void main(String[] args){
 		Client c = new Client();
-		GUI_ChatInterface gci = new GUI_ChatInterface(c);
-		gci.setVisible(true);
-		c.runChat(gci);
+		GUI_SignIn gsi = new GUI_SignIn();
+		gsi.setVisible(true);
+		ClientBufferPusher cbp = new ClientBufferPusher(c,gsi);
+		c.runChat(cbp);
 	}
 }
