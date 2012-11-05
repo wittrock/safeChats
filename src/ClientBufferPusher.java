@@ -21,26 +21,6 @@ public class ClientBufferPusher {
 		this.gsi = gsi;
 	}
 	
-	public void addMessage(String str){
-		try {
-			writeBuffer.put(str);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			return;
-		}
-	}
-	
-	private String getMessage() {
-		//		synchronized(writeBuffer) {
-		try {
-		    	return writeBuffer.take();
-		} catch (InterruptedException e) {
-		    	System.out.println("BufferPusher InterruptedException!");
-		    	e.printStackTrace();
-		    	return null;
-		}
-		//		}
-	}
 	
 	private void printMessage(String message, String chat){
 		Integer chatID = Integer.valueOf(chat);
@@ -100,5 +80,26 @@ public class ClientBufferPusher {
 			String[] message =  str.split(String.valueOf(delim));
 			HandleMessage(message);
 		}
+	}
+	
+	public void addMessage(String str){
+		try {
+			writeBuffer.put(str);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	private String getMessage() {
+		//		synchronized(writeBuffer) {
+		try {
+		    	return writeBuffer.take();
+		} catch (InterruptedException e) {
+		    	System.out.println("BufferPusher InterruptedException!");
+		    	e.printStackTrace();
+		    	return null;
+		}
+		//		}
 	}
 }

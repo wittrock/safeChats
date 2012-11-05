@@ -6,6 +6,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 
 public class GUI_CreateAccount extends JFrame {
@@ -16,12 +17,23 @@ public class GUI_CreateAccount extends JFrame {
 	private JTextField textField;
 	private JPasswordField passwordField;
 	private JPasswordField passwordField_1;
+	private JLabel lblError;
 	
-	private void createAcc(){
-		
+	private void NEW_ACC(){
+		String pass = String.valueOf(passwordField.getPassword());
+		String passCheck =String.valueOf(passwordField_1.getPassword());
+		if(pass.equals(passCheck)){
+			
+		}
+		else{
+			lblError.setText("passwords did not match");
+			passwordField.setText("");
+			passwordField_1.setText("");
+		}
 	}
 	
 	public GUI_CreateAccount() {
+		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("SafeChats-New Account");
 		getContentPane().setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -43,6 +55,7 @@ public class GUI_CreateAccount extends JFrame {
 		getContentPane().add(lblEnterPassword);
 		
 		passwordField = new JPasswordField();
+		passwordField.setToolTipText("");
 		passwordField.setBounds(152, 87, 141, 20);
 		getContentPane().add(passwordField);
 		
@@ -58,11 +71,16 @@ public class GUI_CreateAccount extends JFrame {
 		JButton btnCreateAccount = new JButton("Create Account");
 		btnCreateAccount.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				createAcc();
+				NEW_ACC();
 			}
 		});
 		btnCreateAccount.setBounds(152, 149, 141, 23);
 		getContentPane().add(btnCreateAccount);
+		
+		lblError = new JLabel("");
+		lblError.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblError.setForeground(Color.RED);
+		lblError.setBounds(152, 35, 141, 14);
+		getContentPane().add(lblError);
 	}
-
 }
