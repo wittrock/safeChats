@@ -24,7 +24,16 @@ public class Chatter {
 		return name;
 	}
 
-	public Chatter(String name, ChatterReader reader, ChatterWriter writer) {
+	public void setReader(ChatterReader reader) {
+		this.reader = reader;
+	}
+
+	public void setWriter(ChatterWriter writer) {
+		this.writer = writer;
+	}
+
+
+	public Chatter(String name) {
 		this.name = name;
 		this.reader = reader;
 		this.writer = writer;

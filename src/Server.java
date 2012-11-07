@@ -14,7 +14,7 @@ import java.security.*;
 public class Server {
 	private static final int PORT = 46754;
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
-	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out
+	private LinkedBlockingQueue<Message> writeBuffer; // All of the messages to be sent out
 	private Map<Integer, ChatRoom> rooms;
 	private SecureRandom random;
 
@@ -23,7 +23,8 @@ public class Server {
 		chatters = Collections.synchronizedList(new ArrayList<Chatter>()); //Chatters is a synchronized list. 
 		rooms = Collections.synchronizedMap(new HashMap<Integer, ChatRoom>());
 		
-		writeBuffer = new LinkedBlockingQueue<String>();
+		writeBuffer = new LinkedBlockingQueue<Message>();
+		
 		try {
 		random = SecureRandom.getInstance("SHA1PRNG");
 		} catch (NoSuchAlgorithmException e) {
@@ -40,7 +41,8 @@ public class Server {
 			int numChatters = 0;
 	
 			// The thread that will actively poll the queue and distribute to chatters. 
-			BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer); 
+			BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer, this
+); 
 			(new Thread(bufferPusher)).start();
 
 			// Accept connections forever, stick them on the chatters list. 
@@ -48,9 +50,17 @@ public class Server {
 				Socket s = ss.accept();
 				System.out.println("Got a new connection!");
 				String name = Integer.toString(numChatters);
-				chatters.add(new Chatter(name,
-							 new ChatterReader(this, s, name),
-							 new ChatterWriter(this, s)));
+
+				Chatter chatter = new Chatter(name);
+				ChatterWriter writer = new ChatterWriter(this, s);
+				ChatterReader reader = new ChatterReader(this, s, chatter);
+				chatter.setReader(reader);
+				chatter.setWriter(writer);
+				chatters.add(chatter);
+
+				// chatters.add(new Chatter(name,
+				// 			 new ChatterReader(this, s, name),
+				// 			 new ChatterWriter(this, s)));
 				numChatters++;
 		    
 			}
@@ -64,9 +74,9 @@ public class Server {
 	 * The function that adds a message to the queue of this server. 
 	 * This will be moved to the ChatRoom in the next version.
 	 */
-	public void addMessage(String str) { 
+	public void addMessage(Message msg) { 
 		try {
-			writeBuffer.put(str);
+			writeBuffer.put(msg);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -113,6 +123,7 @@ public class Server {
 
 		ChatRoom room = new ChatRoom(roomId, owner);
 		rooms.put(roomId, room);
+		owner.addMessage("CREATED " + roomId + "$ ");
 	}
 
 	public void removeRoom(int id) {

@@ -9,13 +9,12 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class ChatterReader extends ChatterHandler {
-	String name;
+	Chatter chatter;
 	
-	public ChatterReader(Server server, Socket sock, String name) {
+	public ChatterReader(Server server, Socket sock, Chatter chatter) {
 		super(server, sock);
-		this.name = name;
 	}
-    
+
 	public void run() {
 		if(sock == null || server == null) {
 			return;
@@ -26,15 +25,15 @@ public class ChatterReader extends ChatterHandler {
 			String str = null;
 			while ((str = w.readLine()) != null) { // While the stream is still open...
 				System.out.println("Got message: " + str);
-				server.addMessage("" + this.name + ": " + str  +"\n"); // Send the message on up to the server.
+				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// Do something here and make sure the server removes this particular chatter. 
-		server.removeChatter(this.name);
+
+		server.removeChatter(this.chatter.getName());
 		
-		System.out.println("Chatter " + this.name + "  exited.");
+		System.out.println("Chatter " + this.chatter.getName() + "  exited.");
 	}
 
 }

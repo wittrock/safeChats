@@ -15,17 +15,21 @@ public class GUI_SignIn extends JFrame {
 	private static final long serialVersionUID = -3481153769518892625L;
 	private JTextField userNameField;
 	private JPasswordField passwordField;
+	private Client client;
 	
 	private void attemptAuth(){
-		
+		new GUI_Menu(this.client);
+		this.setVisible(false);
 	}
 	
 	private void createNew(){
 		
 	}
 	
-	public GUI_SignIn() {
-		setResizable(false);
+	public GUI_SignIn(Client client) {
+		this.client = client;
+		setResizable(true);
+		setSize(400, 310);
 		setTitle("SafeChats-Sign In");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setFont(new Font("Tunga", Font.PLAIN, 12));

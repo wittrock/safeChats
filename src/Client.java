@@ -16,6 +16,7 @@ public class Client {
 	private Socket s;
 	private BufferedWriter typedWriter;
 	
+	
 	public Client(){
 		try{
 			SocketFactory sf = SSLSocketFactory.getDefault();
@@ -38,6 +39,11 @@ public class Client {
 			return;
 		}
 	}
+
+	public void createChat() {
+		System.out.println("Client: creating message.");
+		sendMessage("CREATE$ ");
+	}
 	
 	public synchronized void sendMessage(String str){
 		try{
@@ -57,7 +63,7 @@ public class Client {
 	 */	
 	public static void main(String[] args){
 		Client c = new Client();
-		GUI_SignIn gsi = new GUI_SignIn();
+		GUI_SignIn gsi = new GUI_SignIn(c);
 		gsi.setVisible(true);
 		ClientBufferPusher cbp = new ClientBufferPusher(c,gsi);
 		c.runChat(cbp);

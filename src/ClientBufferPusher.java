@@ -30,7 +30,7 @@ public class ClientBufferPusher {
 	
 	private void newChat(String chat){
 		Integer chatID = Integer.valueOf(chat);
-		GUI_ChatInterface gci = new GUI_ChatInterface(client);
+		GUI_ChatInterface gci = new GUI_ChatInterface(client, chat);
 		gci.setVisible(true);
 		chats.put(chatID, gci);
 	}
@@ -59,14 +59,31 @@ public class ClientBufferPusher {
 		
 	}
 	
-	private void HandleMessage(String[] message){
-		String type = "",vars ="",body = "";
+	private void handleMessage(String message){
 		try{
-			type = message[0];
-			vars = message[1];
-			body = message[2];
 			
+			String str = message;
 			
+			// Parse the protocol stuff out
+			int protocolEnd = str.indexOf((int)'$');
+			if (protocolEnd == -1) {
+				// Toss this out. 
+				return;
+			}
+			
+			String protocol = str.substring(0, protocolEnd);
+			String userMessage = str.substring(protocolEnd + 1);
+			
+			String[] args = protocol.split(" ");
+			String command = args[0];
+			
+			if(command.equals("CREATED")) {
+				String id = args[1];
+				newChat(id);
+			} else {
+				// Toss this.
+				return;
+			}
 			
 		}catch(IndexOutOfBoundsException e){
 			System.err.println("The client received an illegal statement");
@@ -77,8 +94,8 @@ public class ClientBufferPusher {
 	public void run(){
 		while(true) {
 			String str = getMessage();
-			String[] message =  str.split(String.valueOf(delim));
-			HandleMessage(message);
+			//String[] message =  str.split(String.valueOf(delim));
+			handleMessage(str);
 		}
 	}
 	

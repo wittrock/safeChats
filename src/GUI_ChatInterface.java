@@ -35,9 +35,10 @@ public class GUI_ChatInterface extends JFrame {
 	}
 	
 	
-	public GUI_ChatInterface(Client c) {
+	public GUI_ChatInterface(Client c, String chatID) {
 		client = c;
 		this.setSize(new Dimension(481, 285));
+		this.setTitle(chatID); // may want to remove this if/when we want to not display debug.
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle("SafeChats");
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
