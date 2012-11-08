@@ -16,6 +16,8 @@ public class Server {
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
 	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out
 	private Map<Integer, ChatRoom> rooms;
+	private HashMap<String, byte[]> authData;
+	private HashMap<String, byte[]> userSalt;
 	private SecureRandom random;
 
 	public Server() {
@@ -131,9 +133,35 @@ public class Server {
 		}
 		System.out.println("Removed a chatter. Num chatters: " + chatters.size());
 	}
+	
+	public void authUser(String userName, String password){
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-512");
+			byte[] b = password.getBytes();
+			
+			byte[] salt = userSalt.get(userName);
+			byte[] hash = authData.get(userName);
+			
+			if(hash == null || salt == null);
+				//call auth failed
+			
+			md.update(salt);
+			byte[] h = md.digest(b);
+			
+			if(h.equals(hash));
+				//call auth accepted
+			else;
+				//call auth failed
+			
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		
+	}
 
 	/* Main method. Not much else to say about it. */
 	public static void main(String[] args) { 
 		Server server = new Server();
 	}
+	
 }

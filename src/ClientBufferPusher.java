@@ -10,15 +10,13 @@ public class ClientBufferPusher {
 	
 	private LinkedBlockingQueue<String> writeBuffer;
 	private HashMap<Integer,GUI_ChatInterface> chats;
-	private GUI_SignIn gsi;
 	private Client client;
 	private final char delim = (char)254;
 	
-	public ClientBufferPusher(Client c, GUI_SignIn gsi){
+	public ClientBufferPusher(Client c){
 		this.writeBuffer = new LinkedBlockingQueue<String>();
 		this.chats = new HashMap<Integer,GUI_ChatInterface>();
 		this.client = c;
-		this.gsi = gsi;
 	}
 	
 	

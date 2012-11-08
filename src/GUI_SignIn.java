@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JPasswordField;
+import java.awt.Color;
 
 
 public class GUI_SignIn extends JFrame {
@@ -15,16 +16,23 @@ public class GUI_SignIn extends JFrame {
 	private static final long serialVersionUID = -3481153769518892625L;
 	private JTextField userNameField;
 	private JPasswordField passwordField;
+	private JLabel lblError;
+	private Client client;
 	
 	private void attemptAuth(){
-		
+		String pass = String.valueOf(passwordField.getPassword());
+		String userName = userNameField.getText();
+		//send message to server
 	}
 	
 	private void createNew(){
-		
+		client.newAccSwitch();
 	}
 	
-	public GUI_SignIn() {
+	public GUI_SignIn(Client c) {
+		client = c;
+		
+		setSize(300, 210);
 		setResizable(false);
 		setTitle("SafeChats-Sign In");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -56,7 +64,7 @@ public class GUI_SignIn extends JFrame {
 				createNew();
 			}
 		});
-		btnClickHere.setBounds(102, 27, 79, 19);
+		btnClickHere.setBounds(102, 27, 89, 19);
 		getContentPane().add(btnClickHere);
 		
 		JButton btnSignIn = new JButton("Sign In");
@@ -71,5 +79,11 @@ public class GUI_SignIn extends JFrame {
 		passwordField = new JPasswordField();
 		passwordField.setBounds(112, 110, 151, 23);
 		getContentPane().add(passwordField);
+		
+		lblError = new JLabel("");
+		lblError.setForeground(Color.RED);
+		lblError.setFont(new Font("Tahoma", Font.BOLD, 11));
+		lblError.setBounds(112, 57, 151, 14);
+		getContentPane().add(lblError);
 	}
 }

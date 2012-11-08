@@ -8,6 +8,7 @@ import java.io.OutputStreamWriter;
 import java.net.Socket;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
+import javax.swing.JFrame;
 
 
 public class Client {
@@ -15,6 +16,8 @@ public class Client {
 	private static final String HOST = "localhost";
 	private Socket s;
 	private BufferedWriter typedWriter;
+	private JFrame gsi;
+	private JFrame gca;
 	
 	public Client(){
 		try{
@@ -26,6 +29,16 @@ public class Client {
 			e.printStackTrace();
 			return;
 		}
+	}
+	
+	public void authed(){
+		gsi.dispose();
+		gca.dispose();
+	}
+	
+	public void newAccSwitch(){
+		gsi.setVisible(false);
+		gca.setVisible(true);
 	}
 
 	/* This method spawns a thread to listen for messages */
@@ -57,9 +70,11 @@ public class Client {
 	 */	
 	public static void main(String[] args){
 		Client c = new Client();
-		GUI_SignIn gsi = new GUI_SignIn();
-		gsi.setVisible(true);
-		ClientBufferPusher cbp = new ClientBufferPusher(c,gsi);
+		c.gsi = new GUI_SignIn(c);
+		c.gsi.setVisible(true);
+		c.gca = new GUI_CreateAccount(c);
+		c.gca.setVisible(false);
+		ClientBufferPusher cbp = new ClientBufferPusher(c);
 		c.runChat(cbp);
 	}
 }

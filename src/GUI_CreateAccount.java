@@ -18,12 +18,13 @@ public class GUI_CreateAccount extends JFrame {
 	private JPasswordField passwordField;
 	private JPasswordField passwordField_1;
 	private JLabel lblError;
+	private Client client;
 	
 	private void NEW_ACC(){
 		String pass = String.valueOf(passwordField.getPassword());
 		String passCheck =String.valueOf(passwordField_1.getPassword());
 		if(pass.equals(passCheck)){
-			
+			//send message to server with auth info
 		}
 		else{
 			lblError.setText("passwords did not match");
@@ -32,7 +33,11 @@ public class GUI_CreateAccount extends JFrame {
 		}
 	}
 	
-	public GUI_CreateAccount() {
+	public GUI_CreateAccount(Client c) {
+		
+		this.client = c;
+		
+		setSize(340,225);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("SafeChats-New Account");
