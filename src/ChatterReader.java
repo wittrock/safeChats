@@ -13,6 +13,7 @@ public class ChatterReader extends ChatterHandler {
 	
 	public ChatterReader(Server server, Socket sock, Chatter chatter) {
 		super(server, sock);
+		this.chatter = chatter;
 	}
 
 	public void run() {
@@ -27,7 +28,8 @@ public class ChatterReader extends ChatterHandler {
 			String str = null;
 			while ((str = w.readLine()) != null) { // While the stream is still open
 				System.out.println("Got message: " + str);
-				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
+				//				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
+				server.addMessage(new Message(str, this.chatter));
 			}
 		} catch (Exception e) {
 			System.out.println("Exception in ChatterReader!");

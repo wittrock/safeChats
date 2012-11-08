@@ -47,6 +47,8 @@ public class Client {
 		try{
 			ClientMessageListener cml = new ClientMessageListener(s,cbp);
 			(new Thread(cml)).start();
+			(new Thread(cbp)).start();
+
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;

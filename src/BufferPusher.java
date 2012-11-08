@@ -49,6 +49,7 @@ public class BufferPusher extends Thread {
 			String command = args[0];
 
 			if (command.equals("CREATE")) {
+				System.out.println("Sending create command to " + msg.getSender().getName());
 				server.createRoom(msg.getSender());
 				continue;
 			} else {

@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * This class is a buffer for handling messages from the server
  */
 
-public class ClientBufferPusher {
+public class ClientBufferPusher implements Runnable {
 	
 	private LinkedBlockingQueue<String> writeBuffer;
 	private HashMap<Integer,GUI_ChatInterface> chats;
@@ -59,7 +59,7 @@ public class ClientBufferPusher {
 	
 	private void handleMessage(String message){
 		try{
-			
+			System.out.println("Got message: " + message);
 			String str = message;
 			
 			// Parse the protocol stuff out
@@ -92,7 +92,7 @@ public class ClientBufferPusher {
 	public void run(){
 		while(true) {
 			String str = getMessage();
-			//String[] message =  str.split(String.valueOf(delim));
+			System.out.println("Got message: " + str);
 			handleMessage(str);
 		}
 	}
@@ -107,7 +107,6 @@ public class ClientBufferPusher {
 	}
 	
 	private String getMessage() {
-		//		synchronized(writeBuffer) {
 		try {
 		    	return writeBuffer.take();
 		} catch (InterruptedException e) {
@@ -115,6 +114,5 @@ public class ClientBufferPusher {
 		    	e.printStackTrace();
 		    	return null;
 		}
-		//		}
 	}
 }
