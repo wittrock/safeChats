@@ -6,8 +6,8 @@
 public class Chatter {
 	protected String name;
 	//add list of rooms here later.
-	ChatterWriter writer;
-	ChatterReader reader;
+	ChatterWriter writer = null;
+	ChatterReader reader = null;
 	Thread writerThread;
 	Thread readerThread;
  
@@ -24,14 +24,26 @@ public class Chatter {
 		return name;
 	}
 
-	public Chatter(String name, ChatterReader reader, ChatterWriter writer) {
+	public void setReader(ChatterReader reader) {
+		if (this.reader == null) { 
+			System.out.println("Really starting a new Reader");
+			this.reader = reader;
+			readerThread = new Thread(this.reader);
+
+			readerThread.start();
+		}
+	}
+
+	public void setWriter(ChatterWriter writer) {
+		if (this.writer == null) { 
+			this.writer = writer;
+			writerThread = new Thread(this.writer);
+			writerThread.start();
+		} 
+	}
+
+	public Chatter(String name) {
 		this.name = name;
-		this.reader = reader;
-		this.writer = writer;
-		writerThread = new Thread(this.writer);
-		readerThread = new Thread(this.reader);
-		writerThread.start();
-		readerThread.start();
 		System.out.println("Started a new Chatter " + name);
 	}
 }

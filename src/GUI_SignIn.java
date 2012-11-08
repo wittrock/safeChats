@@ -22,18 +22,22 @@ public class GUI_SignIn extends JFrame {
 	private void attemptAuth(){
 		String pass = String.valueOf(passwordField.getPassword());
 		String userName = userNameField.getText();
+		new GUI_Menu(this.client);
+		this.setVisible(false);
 		//send message to server
+
 	}
 	
 	private void createNew(){
 		client.newAccSwitch();
 	}
 	
-	public GUI_SignIn(Client c) {
-		client = c;
-		
+
+	public GUI_SignIn(Client client) {
+		this.client = client;
 		setSize(300, 210);
 		setResizable(false);
+		
 		setTitle("SafeChats-Sign In");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setFont(new Font("Tunga", Font.PLAIN, 12));

@@ -19,6 +19,7 @@ public class Client {
 	private JFrame gsi;
 	private JFrame gca;
 	
+	
 	public Client(){
 		try{
 			SocketFactory sf = SSLSocketFactory.getDefault();
@@ -51,10 +52,16 @@ public class Client {
 			return;
 		}
 	}
+
+	public void createChat() {
+		System.out.println("Client: creating message.");
+		sendMessage("CREATE$ ");
+	}
 	
 	public synchronized void sendMessage(String str){
 		try{
 			typedWriter.write(str+"\n");
+			System.out.println("Flushing socket: " + str);
 			typedWriter.flush();
 			System.out.println("Flushed socket: " + str);
 		}catch (Exception e) {
