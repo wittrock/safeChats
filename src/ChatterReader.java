@@ -17,17 +17,20 @@ public class ChatterReader extends ChatterHandler {
 
 	public void run() {
 		if(sock == null || server == null) {
+			System.out.println("Error initializing ChatterReader");
 			return;
 		}
 		try{
-			BufferedReader w = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 			System.out.println("ChatterReader started...");
+			BufferedReader w = new BufferedReader(new InputStreamReader(sock.getInputStream()));
+
 			String str = null;
-			while ((str = w.readLine()) != null) { // While the stream is still open...
+			while ((str = w.readLine()) != null) { // While the stream is still open
 				System.out.println("Got message: " + str);
 				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
 			}
 		} catch (Exception e) {
+			System.out.println("Exception in ChatterReader!");
 			e.printStackTrace();
 		}
 

@@ -48,6 +48,7 @@ public class Client {
 	public synchronized void sendMessage(String str){
 		try{
 			typedWriter.write(str+"\n");
+			System.out.println("Flushing socket: " + str);
 			typedWriter.flush();
 			System.out.println("Flushed socket: " + str);
 		}catch (Exception e) {

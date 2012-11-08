@@ -57,7 +57,6 @@ public class Server {
 				chatter.setReader(reader);
 				chatter.setWriter(writer);
 				chatters.add(chatter);
-
 				// chatters.add(new Chatter(name,
 				// 			 new ChatterReader(this, s, name),
 				// 			 new ChatterWriter(this, s)));
