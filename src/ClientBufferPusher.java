@@ -74,9 +74,13 @@ public class ClientBufferPusher implements Runnable {
 		
 	}
 	
+	private void joinChat(String chat) {
+		client.sendMessage("JOIN " + chat + " $ ");
+	}
+
 	private void handleMessage(String message){
 		try{
-			System.out.println("Got message: " + message);
+			//System.out.println("Got message: " + message);
 			String str = message;
 			
 			// Parse the protocol stuff out
@@ -114,6 +118,16 @@ public class ClientBufferPusher implements Runnable {
 			} else if (command.equals("NEW_ACC")){
 				String bool = args[1];
 				NEW_ACC(bool);
+			} else if (command.equals("INVITE")) {
+				if (args.length < 3) {
+					return;
+				}
+				String chatId = args[2];
+
+				// maybe throw up an accept dialog here?
+				joinChat(args[2]);
+			} else if (command.equals("JOINED")) {
+				newChat(args[1]);
 			} else {
 				// Toss this.
 				System.out.println("Command not recognized");

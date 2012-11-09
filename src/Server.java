@@ -98,7 +98,6 @@ public class Server {
 		return null;
 	}
 
-	// MAJOR SECURITY FLAW HERE. MAKE SURE THAT THE CHATTER WAS INVITED FIRST
 	public boolean addChatterToRoom(Chatter c, int roomId) {
 		ChatRoom room = rooms.get(roomId);
 		if (room == null) {
@@ -218,7 +217,7 @@ public class Server {
 	
 	private void readAuthFile(){
 		try {
-			BufferedReader in = new BufferedReader(new FileReader("src\\auth.txt"));
+			BufferedReader in = new BufferedReader(new FileReader("auth.txt"));
 			String line = "";
 			while((line=in.readLine())!=null){
 				System.out.println(line);
@@ -237,7 +236,7 @@ public class Server {
 	
 	private void writeAuthFile(String user, String pass){
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter("src\\auth.txt"));
+			PrintWriter out = new PrintWriter(new FileWriter("auth.txt"));
 			String put = user+"\t"+pass;
 			out.println(put);
 			out.close();

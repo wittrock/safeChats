@@ -71,9 +71,50 @@ public class BufferPusher extends Thread {
 				}
 
 			} else if (command.equals("INVITE")) {
+				if(numArgs < 3) {
+					continue; // invalid invite message. Log here?
+				}
+
+				String invitedChatter = args[1];
+				String roomId = args[2];
+				Chatter c = server.getChatterByName(invitedChatter);
+				if (c == null) {
+					// send a failure message here. 
+					String inviteFailure = "INVITE_FAILED " + args[1] + " $ ";
+					msg.getSender().addMessage(inviteFailure);
+					continue;
+				}
 				
+				// check that the sender is actually in the room. 
+				ChatRoom room = server.getRoomByID(roomId);
+				if (room == null || !room.containsChatter(msg.getSender())) {
+					// invalid room. will consider sending a different failure message here.
+					continue;
+				}
+
+				room.inviteChatter(c);
+				// forward on the invite message.
+				c.addMessage("" + protocol + " $ ");
+
+
+			} else if (command.equals("JOIN")) {
+				if (numArgs < 2) {
+					continue;
+				}
+				
+				String roomId = args[1];
+				//				Chatter c = server.getChatterByName(invitedChatter);
+				Chatter c = msg.getSender();
+				ChatRoom room = server.getRoomByID(roomId);
+				if (c == null || room == null || !room.addChatter(c)) {
+					System.out.println("No invited chatter by that name: " + msg.getSender().getName());
+					continue;
+				}
+
+				c.addMessage("JOINED " + roomId + " $ ");
 
 			} else if(command.equals("AUTH")){
+				// We should do some error checking here. 
 				server.authUser(args[1],args[2],msg.getSender());
 				continue;
 			} else if (command.equals("NEW_ACC")){

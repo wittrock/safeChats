@@ -78,9 +78,8 @@ public class Client {
 	public synchronized void sendMessage(String str){
 		try{
 			typedWriter.write(str+"\n");
-			System.out.println("Flushing socket: " + str);
 			typedWriter.flush();
-			System.out.println("Flushed socket: " + str);
+			System.out.println("Sent message: " + str);
 		}catch (Exception e) {
 			System.out.println("Caught exception in sendMessage");
 			e.printStackTrace();

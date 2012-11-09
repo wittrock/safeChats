@@ -1,6 +1,7 @@
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JButton;
+import javax.swing.JTextField;
 import javax.swing.JTextArea;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
@@ -28,6 +29,8 @@ public class GUI_ChatInterface extends JFrame {
 	
 	private JTextArea chatText;
 	private JTextArea userText;
+	private JTextField inviteField;
+	private JButton inviteButton;
 	private JButton btnSend;
 	private Client client;
 	private String chatID;
@@ -41,7 +44,14 @@ public class GUI_ChatInterface extends JFrame {
 		userText.setText("");
 	}
 	
-	
+	public void inviteUser() {
+		String invite = inviteField.getText();
+		if (invite.length() <= 0) return;
+		client.sendMessage("INVITE " + invite + " " + chatID + " $ ");
+		inviteField.setText("");
+	}
+
+
 	public GUI_ChatInterface(Client c, String chatID) {
 		this.chatID = chatID;
 		client = c;
@@ -111,6 +121,18 @@ public class GUI_ChatInterface extends JFrame {
 		});
 		panel.add(userText, "1, 1, 2, 2, fill, fill");
 		
+		inviteField = new JTextField(20);
+		getContentPane().add(inviteField, "4, 2");
+		
+		inviteButton = new JButton("Invite...");
+		inviteButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0){
+					inviteUser();
+				}
+			});
+
+		getContentPane().add(inviteButton, "4, 3");
+
 		btnSend = new JButton("SEND");
 		btnSend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

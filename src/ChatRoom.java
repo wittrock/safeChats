@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class ChatRoom {
 	
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
+	private List<Chatter> invited;
 	
 	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out. 
 	private int id;
@@ -13,12 +14,23 @@ public class ChatRoom {
 	
 	public ChatRoom(int id, Chatter owner) {
 		this.chatters = Collections.synchronizedList(new ArrayList<Chatter>());
+		this.invited = Collections.synchronizedList(new ArrayList<Chatter>());
 		this.owner = owner;
 		chatters.add(owner);
 	}
 	
-	public void addChatter(Chatter c) {
-		chatters.add(c);
+	public boolean addChatter(Chatter c) {
+		if (invited.contains(c)) {
+			System.out.println("Found invited chatter: " + c.getName());
+			chatters.add(c);
+			invited.remove(c);
+			return true;
+		}
+		return false;
+	}
+
+	public void inviteChatter(Chatter c) {
+		invited.add(c);
 	}
 
 	public void removeChatter(Chatter c) {
