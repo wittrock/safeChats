@@ -8,8 +8,9 @@ To run the server:
 `   $ make runserver`
 
 To run a client:
-`   $ make runclient`
-   
+`   $ make runclient host=<HOST>`
+where <HOST> is the IP address of the server. If you do not specify this argument, the client will default to connecting to localhost.   
+
 Closing a client window will not exit the client program entirely. We did this to allow for multiple chat windows in future. To fully exit the client, you should kill it with Ctrl-C.
 
 Note also that you can start multiple clients by simply opening another terminal in the same src directory and executing `make runclient` again.

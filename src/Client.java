@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 
 public class Client {
 	private static final int PORT = 46754;
-	private static final String HOST = "localhost";
+	private static  String HOST;
 	private Socket s;
 	private BufferedWriter typedWriter;
 	private GUI_SignIn gsi;
@@ -92,6 +92,11 @@ public class Client {
 	 * Pretty simple class, this. Makes a new GUI, spawns a couple of threads, listens to chats, writes chats. 
 	 */	
 	public static void main(String[] args){
+		if (args.length < 1) {
+			System.out.println("No HOST specified... defaulting to localhost.");
+		} else {
+			HOST = args[0];
+		}
 		Client c = new Client();
 		c.gsi = new GUI_SignIn(c);
 		c.gsi.setVisible(true);
