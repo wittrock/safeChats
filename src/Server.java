@@ -236,7 +236,7 @@ public class Server {
 	
 	private void writeAuthFile(String user, String pass){
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter("auth.txt"));
+			PrintWriter out = new PrintWriter(new FileWriter("auth.txt"), true); // append to the file, don't overwrite.
 			String put = user+"\t"+pass;
 			out.println(put);
 			out.close();
