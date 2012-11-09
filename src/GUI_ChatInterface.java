@@ -24,23 +24,25 @@ public class GUI_ChatInterface extends JFrame {
 	private JTextArea userText;
 	private JButton btnSend;
 	private Client client;
+	private String chatID;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
 	}
 	
 	public void sendUserText(){
-		client.sendMessage(userText.getText());
+		client.sendMessage("MSG " + chatID + " $ " + userText.getText());
 		userText.setText("");
 	}
 	
 	
 	public GUI_ChatInterface(Client c, String chatID) {
+		this.chatID = chatID;
 		client = c;
 		this.setSize(new Dimension(481, 285));
-		this.setTitle(chatID); // may want to remove this if/when we want to not display debug.
+		this.setTitle("SafeChats -- " + chatID); // may want to remove this if/when we want to not display debug.
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle("SafeChats");
+		//		setTitle("SafeChats");
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(203dlu;default):grow"),

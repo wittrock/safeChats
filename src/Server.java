@@ -131,6 +131,11 @@ public class Server {
 		rooms.remove(id);
 	}
 
+	public ChatRoom getRoomByID(String idString) {
+		int id = Integer.valueOf(idString);
+		return rooms.get(id);
+	}
+
 	// This should very much be done with a direct reference for the sake of security.
 	// For now, this will suffice.
 	public void removeChatter(String name) {

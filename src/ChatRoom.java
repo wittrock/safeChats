@@ -17,14 +17,24 @@ public class ChatRoom {
 		chatters.add(owner);
 	}
 	
-	public void addChatter(Chatter c){
+	public void addChatter(Chatter c) {
 		chatters.add(c);
 	}
 
-	public void removeChatter(Chatter c){
+	public void removeChatter(Chatter c) {
 		chatters.remove(c);
 	}
 
-	
+	public boolean containsChatter(Chatter c) {
+		return chatters.contains(c);
+	}
+
+	public void distributeMessage(String message) {
+		System.out.println("Pushing a message to chatters: " + message);
+		for(Chatter c : this.chatters) {
+			c.addMessage(message);
+		}
+
+	}
 
 }

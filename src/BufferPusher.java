@@ -46,22 +46,37 @@ public class BufferPusher extends Thread {
 			String userMessage = str.substring(protocolEnd + 1);
 			
 			String[] args = protocol.split(" ");
+			int numArgs = args.length;
 			String command = args[0];
 
 			if (command.equals("CREATE")) {
 				System.out.println("Sending create command to " + msg.getSender().getName());
 				server.createRoom(msg.getSender());
 				continue;
+			} else if (command.equals("MSG")) {
+				if (numArgs < 2) {
+					//incorrectly formatted message. Log here?
+					continue;//toss.
+				}
+				String roomID = args[1];
+				Chatter sender = msg.getSender();
+				ChatRoom room = server.getRoomByID(roomID);
+				if (room == null) {
+					//invalid room. Log here?
+					continue;
+				}
+				if (room.containsChatter(sender)) {
+					String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + userMessage;
+					room.distributeMessage(annotatedMsg);
+				}
+
+			} else if (command.equals("INVITE")) {
+				
 			} else {
 				//toss out the whole thing.
 				continue;
 			}
 
-			// MOVE THIS TO MSG COMMAND
-			// System.out.println("Pushing a message to chatters: " + str);
-			// for(Chatter c : chatters) {
-			// 	c.addMessage(str);
-			// }
 		}
 	}
 

@@ -77,13 +77,28 @@ public class ClientBufferPusher implements Runnable {
 			
 			if(command.equals("CREATED")) {
 				String id = args[1];
+				System.out.println("Got a created command: " + id);
 				newChat(id);
+			} else if (command.equals("MSG")) {
+				if (args.length < 2) {
+					return;
+				}
+				
+				int roomId = Integer.valueOf(args[1]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) {
+					System.out.println("Could not find the room id: " + protocol);
+					return;
+				}
+				ci.addChatText(userMessage);
+				
 			} else {
 				// Toss this.
+				System.out.println("Command not recognized");
 				return;
 			}
 			
-		}catch(IndexOutOfBoundsException e){
+		} catch(IndexOutOfBoundsException e){
 			System.err.println("The client received an illegal statement");
 			return;
 		}
