@@ -24,13 +24,17 @@ public class GUI_CreateAccount extends JFrame {
 		String pass = String.valueOf(passwordField.getPassword());
 		String passCheck =String.valueOf(passwordField_1.getPassword());
 		if(pass.equals(passCheck)){
-			//send message to server with auth info
+			client.newAcc(textField.getText(),pass);
 		}
 		else{
 			lblError.setText("passwords did not match");
 			passwordField.setText("");
 			passwordField_1.setText("");
 		}
+	}
+	
+	public void accFailed(){
+		lblError.setText("userName has already be used");
 	}
 	
 	public GUI_CreateAccount(Client c) {

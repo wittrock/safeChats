@@ -72,6 +72,12 @@ public class BufferPusher extends Thread {
 
 			} else if (command.equals("INVITE")) {
 				
+
+			} else if(command.equals("AUTH")){
+				server.authUser(args[1],args[2],msg.getSender());
+				continue;
+			} else if (command.equals("NEW_ACC")){
+				server.newAcc(args[1], args[2], msg.getSender());
 			} else {
 				//toss out the whole thing.
 				continue;

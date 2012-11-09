@@ -5,6 +5,7 @@
  */
 public class Chatter {
 	protected String name;
+	private boolean authenticated;
 	//add list of rooms here later.
 	ChatterWriter writer = null;
 	ChatterReader reader = null;
@@ -41,9 +42,18 @@ public class Chatter {
 			writerThread.start();
 		} 
 	}
+	
+	public boolean isAuthenticated(){
+		return authenticated;
+	}
+	
+	public void authUser(){
+		authenticated = true;
+	}
 
 	public Chatter(String name) {
 		this.name = name;
+		this.authenticated = false;
 		System.out.println("Started a new Chatter " + name);
 	}
 }

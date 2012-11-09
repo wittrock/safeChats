@@ -4,6 +4,12 @@
  */
 
 import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.net.ServerSocketFactory;
@@ -16,15 +22,15 @@ public class Server {
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
 	private LinkedBlockingQueue<Message> writeBuffer; // All of the messages to be sent out
 	private Map<Integer, ChatRoom> rooms;
-	private HashMap<String, byte[]> authData;
-	private HashMap<String, byte[]> userSalt;
+	private Map<String, String> authData;
 	private SecureRandom random;
 
 	public Server() {
 		System.out.println("Started the server...");
 		chatters = Collections.synchronizedList(new ArrayList<Chatter>()); //Chatters is a synchronized list. 
 		rooms = Collections.synchronizedMap(new HashMap<Integer, ChatRoom>());
-		
+		authData = Collections.synchronizedMap(new HashMap<String,String>());
+		readAuthFile();
 		writeBuffer = new LinkedBlockingQueue<Message>();
 		
 		try {
@@ -149,34 +155,107 @@ public class Server {
 		System.out.println("Removed a chatter. Num chatters: " + chatters.size());
 	}
 	
-	public void authUser(String userName, String password){
+	public void authUser(String userName, String password, Chatter user){
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-512");
 			byte[] b = password.getBytes();
 			
-			byte[] salt = userSalt.get(userName);
-			byte[] hash = authData.get(userName);
+			String sH = authData.get(userName);
 			
-			if(hash == null || salt == null);
-				//call auth failed
-			
+			if(sH == null){
+				user.addMessage("AUTH false$ ");
+				return;
+			}
+			String[] div = sH.split("#");
+			byte[] salt = util_StringToByteArr(div[0]);
+			byte[] hash = util_StringToByteArr(div[1]);
 			md.update(salt);
 			byte[] h = md.digest(b);
-			
-			if(h.equals(hash));
-				//call auth accepted
-			else;
-				//call auth failed
+			if(Arrays.equals(hash, h)){
+				user.authUser();
+				user.addMessage("AUTH true$ ");
+				user.name = userName;
+			}
+			else{
+				user.addMessage("AUTH false$ ");
+			}
 			
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		
 	}
+	
+	public void newAcc(String userName, String password, Chatter user){
+		String sh = authData.get(userName);
+		
+		try {
+			if(sh == null){
+				MessageDigest md = MessageDigest.getInstance("SHA-512");
+				
+				byte[] salt = {1,2,3,4}; //obviously need to change this
+				md.update(salt);
+				byte[] hashP = md.digest(password.getBytes());
+				authData.put(userName,Arrays.toString(salt)+"#"+Arrays.toString(hashP));
+				writeAuthFile(userName,Arrays.toString(salt)+"#"+Arrays.toString(hashP));
+				
+				user.authUser();
+				user.name = userName;
+				user.addMessage("NEW_ACC true$ ");
+			}
+			else{
+				user.addMessage("NEW_ACC false$ ");
+			}
+		}catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+	}
 
 	/* Main method. Not much else to say about it. */
 	public static void main(String[] args) { 
 		Server server = new Server();
+	}
+	
+	private void readAuthFile(){
+		try {
+			BufferedReader in = new BufferedReader(new FileReader("src\\auth.txt"));
+			String line = "";
+			while((line=in.readLine())!=null){
+				System.out.println(line);
+				String[] s =line.split("\t");
+				authData.put(s[0], s[1]);
+			}
+			in.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void writeAuthFile(String user, String pass){
+		try {
+			PrintWriter out = new PrintWriter(new FileWriter("src\\auth.txt"));
+			String put = user+"\t"+pass;
+			out.println(put);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public byte[] util_StringToByteArr(String str){
+		str = str.replace("[","");
+		str = str.replace("]","");
+		String[] u = str.split(", ");
+		byte[] ret = new byte[u.length];
+		for(int i=0;i<u.length;i++){
+			ret[i] = Byte.valueOf(u[i]);
+		}
+		return ret;
 	}
 	
 }

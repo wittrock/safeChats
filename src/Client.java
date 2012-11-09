@@ -16,8 +16,8 @@ public class Client {
 	private static final String HOST = "localhost";
 	private Socket s;
 	private BufferedWriter typedWriter;
-	private JFrame gsi;
-	private JFrame gca;
+	private GUI_SignIn gsi;
+	private GUI_CreateAccount gca;
 	
 	
 	public Client(){
@@ -37,6 +37,14 @@ public class Client {
 		gca.dispose();
 	}
 	
+	public void authFailed(){
+		gsi.authFailed();
+	}
+	
+	public void newAccFailed(){
+		gca.accFailed();
+	}
+	
 	public void newAccSwitch(){
 		gsi.setVisible(false);
 		gca.setVisible(true);
@@ -48,7 +56,6 @@ public class Client {
 			ClientMessageListener cml = new ClientMessageListener(s,cbp);
 			(new Thread(cml)).start();
 			(new Thread(cbp)).start();
-
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -58,6 +65,14 @@ public class Client {
 	public void createChat() {
 		System.out.println("Client: creating message.");
 		sendMessage("CREATE$ ");
+	}
+	
+	public void authUser(String userName, String password) {
+		sendMessage("AUTH "+userName+" "+password+"$ ");
+	}
+	
+	public void newAcc(String userName, String password){
+		sendMessage("NEW_ACC "+userName+" "+password+"$ ");
 	}
 	
 	public synchronized void sendMessage(String str){

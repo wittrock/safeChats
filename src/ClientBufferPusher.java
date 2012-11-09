@@ -10,6 +10,7 @@ public class ClientBufferPusher implements Runnable {
 	
 	private LinkedBlockingQueue<String> writeBuffer;
 	private HashMap<Integer,GUI_ChatInterface> chats;
+	private GUI_Menu menu;
 	private Client client;
 	private final char delim = (char)254;
 	
@@ -38,9 +39,25 @@ public class ClientBufferPusher implements Runnable {
 	}
 	
 	private void AUTH(String bool){
-		Boolean authed = Boolean.valueOf(bool);
-		//add if authed, open main menu
-		//otherwise display message on gsi
+		boolean authed = Boolean.valueOf(bool);
+		if(authed){
+			client.authed();
+			menu = new GUI_Menu(client);
+			menu.setVisible(true);
+		}else{
+			client.authFailed();
+		}
+	}
+	
+	private void NEW_ACC(String bool){
+		boolean authed = Boolean.valueOf(bool);
+		if(authed){
+			client.authed();
+			menu = new GUI_Menu(client);
+			menu.setVisible(true);
+		}else{
+			client.authFailed();
+		}
 	}
 	
 	private void USR_ADDED(String chat, String user){
@@ -91,7 +108,12 @@ public class ClientBufferPusher implements Runnable {
 					return;
 				}
 				ci.addChatText(userMessage);
-				
+			} else if (command.equals("AUTH")){
+				String bool = args[1];
+				AUTH(bool);
+			} else if (command.equals("NEW_ACC")){
+				String bool = args[1];
+				NEW_ACC(bool);
 			} else {
 				// Toss this.
 				System.out.println("Command not recognized");
