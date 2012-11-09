@@ -22,14 +22,15 @@ public class GUI_SignIn extends JFrame {
 	private void attemptAuth(){
 		String pass = String.valueOf(passwordField.getPassword());
 		String userName = userNameField.getText();
-		new GUI_Menu(this.client);
-		this.setVisible(false);
-		//send message to server
-
+		client.authUser(userName,pass);
 	}
 	
 	private void createNew(){
 		client.newAccSwitch();
+	}
+	
+	public void authFailed(){
+		lblError.setText("Log In Failed");
 	}
 	
 

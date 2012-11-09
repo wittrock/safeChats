@@ -52,7 +52,12 @@ public class BufferPusher extends Thread {
 				System.out.println("Sending create command to " + msg.getSender().getName());
 				server.createRoom(msg.getSender());
 				continue;
-			} else {
+			}else if(command.equals("AUTH")){
+				server.authUser(args[1],args[2],msg.getSender());
+				continue;
+			}else if (command.equals("NEW_ACC")){
+				server.newAcc(args[1], args[2], msg.getSender());
+			}else {
 				//toss out the whole thing.
 				continue;
 			}
