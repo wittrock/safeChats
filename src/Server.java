@@ -65,9 +65,6 @@ public class Server {
 				chatter.setReader(reader);
 				chatter.setWriter(writer);
 				chatters.add(chatter);
-				// chatters.add(new Chatter(name,
-				// 			 new ChatterReader(this, s, name),
-				// 			 new ChatterWriter(this, s)));
 				numChatters++;
 		    
 			}
@@ -78,8 +75,7 @@ public class Server {
 	}
 
 	/*
-	 * The function that adds a message to the queue of this server. 
-	 * This will be moved to the ChatRoom in the next version.
+	 * The function that adds a message to the work queue of this server. 
 	 */
 	public void addMessage(Message msg) { 
 		try {
@@ -236,7 +232,7 @@ public class Server {
 	
 	private void writeAuthFile(String user, String pass){
 		try {
-			PrintWriter out = new PrintWriter(new FileWriter("auth.txt"), true); // append to the file, don't overwrite.
+			PrintWriter out = new PrintWriter(new FileWriter("auth.txt", true)); // append to the file, don't overwrite.
 			String put = user+"\t"+pass;
 			out.println(put);
 			out.close();

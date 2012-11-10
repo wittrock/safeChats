@@ -52,6 +52,13 @@ public class GUI_ChatInterface extends JFrame {
 	}
 
 
+	public void dispose() {
+		client.leaveRoom(this);
+		super.dispose();
+	}
+
+	public String getChatID() { return chatID; }
+
 	public GUI_ChatInterface(Client c, String chatID) {
 		this.chatID = chatID;
 		client = c;

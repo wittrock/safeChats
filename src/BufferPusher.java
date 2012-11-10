@@ -119,6 +119,16 @@ public class BufferPusher extends Thread {
 				continue;
 			} else if (command.equals("NEW_ACC")){
 				server.newAcc(args[1], args[2], msg.getSender());
+			} else if (command.equals("USR_LEFT")) {
+				if (numArgs < 2) { continue; }
+				String roomId = args[1];
+				ChatRoom room = server.getRoomByID(roomId);
+				Chatter c = msg.getSender();
+				if (room == null || !room.containsChatter(c)) continue;
+				
+				room.removeChatter(c);
+				room.distributeMessage("USR_LEFT " + c.getName() + " " + roomId + " $ ");
+
 			} else {
 				//toss out the whole thing.
 				continue;
