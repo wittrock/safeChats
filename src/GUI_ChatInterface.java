@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
 
 
 public class GUI_ChatInterface extends JFrame {
@@ -85,11 +87,23 @@ public class GUI_ChatInterface extends JFrame {
 		JPanel panel_1 = new JPanel();
 		getContentPane().add(panel_1, "4, 1, 1, 2, fill, fill");
 		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(88dlu;default)"),},
+				FormFactory.DEFAULT_COLSPEC,},
 			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("20px"),
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("23px"),}));
+		
+		inviteField = new JTextField(20);
+		panel_1.add(inviteField, "1, 2, left, top");
+		
+		inviteButton = new JButton("Invite...");
+		panel_1.add(inviteButton, "1, 4, center, top");
+		inviteButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0){
+					inviteUser();
+				}
+			});
 		
 		JPanel panel_2 = new JPanel();
 		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -114,7 +128,7 @@ public class GUI_ChatInterface extends JFrame {
 				ColumnSpec.decode("default:grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(28dlu;default):grow"),}));
+				RowSpec.decode("default:grow"),}));
 		
 		userText = new JTextArea();
 		userText.setWrapStyleWord(true);
@@ -127,18 +141,6 @@ public class GUI_ChatInterface extends JFrame {
 			}
 		});
 		panel.add(userText, "1, 1, 2, 2, fill, fill");
-		
-		inviteField = new JTextField(20);
-		getContentPane().add(inviteField, "4, 2");
-		
-		inviteButton = new JButton("Invite...");
-		inviteButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0){
-					inviteUser();
-				}
-			});
-
-		getContentPane().add(inviteButton, "4, 3");
 
 		btnSend = new JButton("SEND");
 		btnSend.addActionListener(new ActionListener() {
