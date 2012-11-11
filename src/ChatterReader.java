@@ -32,8 +32,7 @@ public class ChatterReader extends ChatterHandler {
 				server.addMessage(new Message(str, this.chatter));
 			}
 		} catch (Exception e) {
-			System.out.println("Exception in ChatterReader!");
-			e.printStackTrace();
+			System.out.println("Chatter Exited");
 		}
 
 		server.removeChatter(this.chatter.getName());

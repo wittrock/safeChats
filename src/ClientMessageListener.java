@@ -12,6 +12,7 @@ public class ClientMessageListener implements Runnable {
 	
 	private BufferedReader messageReader;
 	private ClientBufferPusher cbp;
+	private boolean kill = false;
 	
 	public ClientMessageListener(Socket s, ClientBufferPusher cbp){
 		try{
@@ -27,7 +28,7 @@ public class ClientMessageListener implements Runnable {
 		System.out.println("ClientMessageListener starting to run...");
 		try{
 			String str = null;
-			while((str=messageReader.readLine())!=null){
+			while((str=messageReader.readLine())!=null && !kill){
 				cbp.addMessage(str + "\n");
 			}
 			System.out.println("Finished loop!");
@@ -35,5 +36,9 @@ public class ClientMessageListener implements Runnable {
 			e.printStackTrace();
 			return;
 		}
+	}
+	
+	public void killProc(){
+		kill = true;
 	}
 }

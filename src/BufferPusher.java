@@ -119,7 +119,7 @@ public class BufferPusher extends Thread {
 				continue;
 			} else if (command.equals("NEW_ACC")){
 				server.newAcc(args[1], args[2], msg.getSender());
-			} else if (command.equals("USR_LEFT")) {
+			} else if (command.equals("CHTR_LEFT")) {
 				if (numArgs < 2) { continue; }
 				String roomId = args[1];
 				ChatRoom room = server.getRoomByID(roomId);
@@ -129,7 +129,13 @@ public class BufferPusher extends Thread {
 				room.removeChatter(c);
 				room.distributeMessage("USR_LEFT " + c.getName() + " " + roomId + " $ ");
 
-			} else {
+			}else if(command.equals("USR_LEFT")){
+				Chatter c = msg.getSender();
+				server.removeChatterFromAllRooms(c);
+				server.removeChatter(c);
+				chatters.remove(c);
+				c.stopAll();
+			}else {
 				//toss out the whole thing.
 				continue;
 			}

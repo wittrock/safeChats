@@ -33,6 +33,14 @@ public class GUI_SignIn extends JFrame {
 		lblError.setText("Log In Failed");
 	}
 	
+	public void dispose() {
+		client.leaveSignIn();
+		super.dispose();
+	}
+	
+	public void disposeCall(){
+		super.dispose();
+	}
 
 	public GUI_SignIn(Client client) {
 		this.client = client;

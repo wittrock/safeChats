@@ -18,6 +18,8 @@ public class Client {
 	private BufferedWriter typedWriter;
 	private GUI_SignIn gsi;
 	private GUI_CreateAccount gca;
+	private ClientBufferPusher cbp;
+	private ClientMessageListener cml;
 	
 	
 	public Client(){
@@ -25,7 +27,6 @@ public class Client {
 			SocketFactory sf = SSLSocketFactory.getDefault();
 			s = sf.createSocket(HOST,PORT);
 			typedWriter = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
-			
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -33,8 +34,8 @@ public class Client {
 	}
 	
 	public void authed(){
-		gsi.dispose();
-		gca.dispose();
+		gsi.disposeCall();
+		gca.disposeCall();
 	}
 	
 	public void authFailed(){
@@ -53,7 +54,7 @@ public class Client {
 	/* This method spawns a thread to listen for messages */
 	public void runChat(ClientBufferPusher cbp){
 		try{
-			ClientMessageListener cml = new ClientMessageListener(s,cbp);
+			cml = new ClientMessageListener(s,cbp);
 			(new Thread(cml)).start();
 			(new Thread(cbp)).start();
 		}catch (Exception e) {
@@ -75,6 +76,30 @@ public class Client {
 		sendMessage("NEW_ACC "+userName+" "+password+"$ ");
 	}
 	
+
+	public void leaveRoom(GUI_ChatInterface chat) {
+		sendMessage("CHTR_LEFT " + chat.getChatID() + " $ ");
+		cbp.leaveChat(chat.getChatID());
+	}
+	
+	public void leaveSignIn(){
+		gca.disposeCall();
+		leaveUser();
+	}
+	public void leaveCreateAcc(){
+		gsi.disposeCall();
+		leaveUser();
+	}
+	public void leaveMenu(){
+		cbp.killChats();
+		leaveUser();
+	}
+	public void leaveUser(){
+		sendMessage("USR_LEFT$ ");
+		cbp.killProc();
+		cml.killProc();
+	}
+	
 	public synchronized void sendMessage(String str){
 		try{
 			typedWriter.write(str+"\n");
@@ -86,11 +111,6 @@ public class Client {
 			return;
 		}
 	}
-
-	public void leaveRoom(GUI_ChatInterface chat) {
-		sendMessage("USR_LEFT " + chat.getChatID() + " $ ");
-	}
-
 
 	/* 
 	 * Pretty simple class, this. Makes a new GUI, spawns a couple of threads, listens to chats, writes chats. 
@@ -107,7 +127,7 @@ public class Client {
 		c.gsi.setVisible(true);
 		c.gca = new GUI_CreateAccount(c);
 		c.gca.setVisible(false);
-		ClientBufferPusher cbp = new ClientBufferPusher(c);
-		c.runChat(cbp);
+		c.cbp = new ClientBufferPusher(c);
+		c.runChat(c.cbp);
 	}
 }

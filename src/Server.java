@@ -51,8 +51,7 @@ public class Server {
 			int numChatters = 0;
 	
 			// The thread that will actively poll the queue and distribute to chatters. 
-			BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer, this
-); 
+			BufferPusher bufferPusher = new BufferPusher(chatters, writeBuffer, this); 
 			(new Thread(bufferPusher)).start();
 
 			// Accept connections forever, stick them on the chatters list. 
@@ -115,6 +114,17 @@ public class Server {
 		room.removeChatter(c);
 		return true;
 	}
+	
+	public void removeChatterFromAllRooms(Chatter c){
+		for(ChatRoom room:rooms.values()){
+			if(room.containsChatter(c))
+				room.removeChatter(c);
+		}
+	}
+	
+	public void removeChatter(Chatter c){
+		chatters.remove(c);
+	}
 
 	public void createRoom(Chatter owner) {
 		int roomId;
@@ -172,6 +182,8 @@ public class Server {
 				user.authUser();
 				user.addMessage("AUTH true$ ");
 				user.name = userName;
+				sendAllNames(user);
+				sendToAll("USR_ADDED " + user.getName()+"$ ");
 			}
 			else{
 				user.addMessage("AUTH false$ ");
@@ -182,7 +194,6 @@ public class Server {
 		}
 		
 	}
-	
 	public void newAcc(String userName, String password, Chatter user){
 		String sh = authData.get(userName);
 		
@@ -205,12 +216,25 @@ public class Server {
 				user.authUser();
 				user.name = userName;
 				user.addMessage("NEW_ACC true$ ");
+				
+				sendAllNames(user);
+				sendToAll("USR_ADDED " + user.getName()+"$ ");
 			}
 			else{
 				user.addMessage("NEW_ACC false$ ");
 			}
 		}catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
+		}
+	}
+	public void sendToAll(String str){
+		for(Chatter c: chatters){
+			c.addMessage(str);
+		}
+	}
+	public void sendAllNames(Chatter c){
+		for(Chatter chat: chatters){
+			c.addMessage("USR_ADDED "+chat.getName()+"$ ");
 		}
 	}
 
@@ -233,10 +257,8 @@ public class Server {
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -248,7 +270,6 @@ public class Server {
 			out.println(put);
 			out.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

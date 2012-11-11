@@ -7,21 +7,16 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
-import com.sun.media.sound.Toolkit;
-
 import javax.swing.border.LineBorder;
 import java.awt.Color;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Window;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.util.LinkedList;
 
 import javax.swing.JScrollPane;
@@ -60,8 +55,10 @@ public class GUI_ChatInterface extends JFrame {
 		inviteField.setText("");
 	}
 	public void addChatter(String name){
-		chatters.add(name);
-		updateChatterDisplay();
+		if(!chatters.contains(name)){
+			chatters.add(name);
+			updateChatterDisplay();
+		}
 	}
 	
 	public void removeChatter(String name){
@@ -72,13 +69,17 @@ public class GUI_ChatInterface extends JFrame {
 	public void updateChatterDisplay(){
 		chatterList.setText("");
 		for(String un:chatters){
-			chatterList.append(un);
+			chatterList.append(un +"\n");
 		}
 	}
 
 
 	public void dispose() {
 		client.leaveRoom(this);
+		super.dispose();
+	}
+	
+	public void disposeCall(){
 		super.dispose();
 	}
 
