@@ -13,7 +13,7 @@ import javax.swing.JFrame;
 
 public class Client {
 	private static final int PORT = 46754;
-	private static  String HOST;
+	private static String HOST;
 	private Socket s;
 	private BufferedWriter typedWriter;
 	private GUI_SignIn gsi;
@@ -85,6 +85,10 @@ public class Client {
 			e.printStackTrace();
 			return;
 		}
+	}
+
+	public void leaveRoom(GUI_ChatInterface chat) {
+		sendMessage("USR_LEFT " + chat.getChatID() + " $ ");
 	}
 
 

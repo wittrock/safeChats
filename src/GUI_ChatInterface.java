@@ -20,6 +20,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.util.LinkedList;
+
+import javax.swing.JScrollPane;
 
 
 public class GUI_ChatInterface extends JFrame {
@@ -34,6 +39,10 @@ public class GUI_ChatInterface extends JFrame {
 	private JButton btnSend;
 	private Client client;
 	private String chatID;
+	private JScrollPane scrollPane;
+	private JScrollPane scrollPane_1;
+	private JTextArea chatterList;
+	private LinkedList<String> chatters;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
@@ -50,7 +59,30 @@ public class GUI_ChatInterface extends JFrame {
 		client.sendMessage("INVITE " + invite + " " + chatID + " $ ");
 		inviteField.setText("");
 	}
+	public void addChatter(String name){
+		chatters.add(name);
+		updateChatterDisplay();
+	}
+	
+	public void removeChatter(String name){
+		chatters.remove(name);
+		updateChatterDisplay();
+	}
+	
+	public void updateChatterDisplay(){
+		chatterList.setText("");
+		for(String un:chatters){
+			chatterList.append(un);
+		}
+	}
 
+
+	public void dispose() {
+		client.leaveRoom(this);
+		super.dispose();
+	}
+
+	public String getChatID() { return chatID; }
 
 	public GUI_ChatInterface(Client c, String chatID) {
 		this.chatID = chatID;
@@ -76,28 +108,51 @@ public class GUI_ChatInterface extends JFrame {
 				RowSpec.decode("max(39dlu;default):grow"),}));
 		
 		JPanel panel_1 = new JPanel();
-		getContentPane().add(panel_1, "4, 1, 1, 2, fill, fill");
+		getContentPane().add(panel_1, "4, 1, 1, 3, fill, fill");
 		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(88dlu;default)"),},
-			new RowSpec[] {
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
-		
-		JPanel panel_2 = new JPanel();
-		panel_2.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		getContentPane().add(panel_2, "1, 1, 2, 2, fill, fill");
-		panel_2.setLayout(new FormLayout(new ColumnSpec[] {
-				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),},
 			new RowSpec[] {
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("20px:grow"),
+				FormFactory.LINE_GAP_ROWSPEC,
+				RowSpec.decode("23px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("default:grow"),}));
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				FormFactory.DEFAULT_ROWSPEC,
+				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("max(11dlu;default)"),}));
+		
+		scrollPane_1 = new JScrollPane();
+		panel_1.add(scrollPane_1, "1, 2, 1, 9, fill, fill");
+		
+		chatterList = new JTextArea();
+		chatterList.setEditable(false);
+		chatterList.setWrapStyleWord(true);
+		scrollPane_1.setViewportView(chatterList);
+		
+		inviteField = new JTextField(20);
+		panel_1.add(inviteField, "1, 12, left, top");
+		
+		inviteButton = new JButton("Invite...");
+		panel_1.add(inviteButton, "1, 14, center, top");
+		inviteButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0){
+					inviteUser();
+				}
+			});
+		
+		scrollPane = new JScrollPane();
+		getContentPane().add(scrollPane, "2, 2, fill, fill");
 		
 		chatText = new JTextArea();
+		scrollPane.setViewportView(chatText);
 		chatText.setWrapStyleWord(true);
 		chatText.setEditable(false);
-		panel_2.add(chatText, "1, 1, 2, 2, fill, fill");
 		
 		JPanel panel = new JPanel();
 		panel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
@@ -107,7 +162,7 @@ public class GUI_ChatInterface extends JFrame {
 				ColumnSpec.decode("default:grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(28dlu;default):grow"),}));
+				RowSpec.decode("default:grow"),}));
 		
 		userText = new JTextArea();
 		userText.setWrapStyleWord(true);
@@ -120,18 +175,6 @@ public class GUI_ChatInterface extends JFrame {
 			}
 		});
 		panel.add(userText, "1, 1, 2, 2, fill, fill");
-		
-		inviteField = new JTextField(20);
-		getContentPane().add(inviteField, "4, 2");
-		
-		inviteButton = new JButton("Invite...");
-		inviteButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent arg0){
-					inviteUser();
-				}
-			});
-
-		getContentPane().add(inviteButton, "4, 3");
 
 		btnSend = new JButton("SEND");
 		btnSend.addActionListener(new ActionListener() {
