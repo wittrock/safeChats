@@ -98,6 +98,7 @@ public class Client {
 	public static void main(String[] args){
 		if (args.length < 1) {
 			System.out.println("No HOST specified... defaulting to localhost.");
+			HOST="localhost";
 		} else {
 			HOST = args[0];
 		}
