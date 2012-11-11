@@ -23,6 +23,7 @@ public class Server {
 	private LinkedBlockingQueue<Message> writeBuffer; // All of the messages to be sent out
 	private Map<Integer, ChatRoom> rooms;
 	private Map<String, String> authData;
+	private List<byte[]> saltsUsed;
 	private SecureRandom random;
 
 	public Server() {
@@ -30,6 +31,7 @@ public class Server {
 		chatters = Collections.synchronizedList(new ArrayList<Chatter>()); //Chatters is a synchronized list. 
 		rooms = Collections.synchronizedMap(new HashMap<Integer, ChatRoom>());
 		authData = Collections.synchronizedMap(new HashMap<String,String>());
+		saltsUsed = new LinkedList<byte[]>();
 		readAuthFile();
 		writeBuffer = new LinkedBlockingQueue<Message>();
 		
@@ -188,7 +190,13 @@ public class Server {
 			if(sh == null){
 				MessageDigest md = MessageDigest.getInstance("SHA-512");
 				
-				byte[] salt = {1,2,3,4}; //obviously need to change this
+				byte[] salt = new byte[4];
+				random.nextBytes(salt);
+				while(saltsUsed.contains(salt)){
+					random.nextBytes(salt);
+				}
+				saltsUsed.add(salt);
+				
 				md.update(salt);
 				byte[] hashP = md.digest(password.getBytes());
 				authData.put(userName,Arrays.toString(salt)+"#"+Arrays.toString(hashP));
@@ -219,6 +227,9 @@ public class Server {
 				System.out.println(line);
 				String[] s =line.split("\t");
 				authData.put(s[0], s[1]);
+				String[] t = s[1].split("#");
+				byte[] salt = util_StringToByteArr(t[0]);
+				saltsUsed.add(salt);
 			}
 			in.close();
 		} catch (FileNotFoundException e) {
