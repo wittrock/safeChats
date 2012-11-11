@@ -43,7 +43,6 @@ public class ChatterWriter extends ChatterHandler {
 			/* Get a message from the queue, write it to the socket. */
 			while(true && this.running) {
 				str = writeBuffer.take();
-				System.out.println("ChatterWriter: got a message -- " + str);
 				w.write(str + '\n');
 				w.flush();
 				System.out.println("ChatterWriter: sent a message -- " + str);

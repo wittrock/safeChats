@@ -87,7 +87,7 @@ public class BufferPusher extends Thread {
 				
 				// check that the sender is actually in the room. 
 				ChatRoom room = server.getRoomByID(roomId);
-				if (room == null || !room.containsChatter(msg.getSender())) {
+				if (room == null || !room.containsChatter(msg.getSender()) || room.containsChatter(c)) {
 					// invalid room. will consider sending a different failure message here.
 					continue;
 				}
@@ -110,8 +110,10 @@ public class BufferPusher extends Thread {
 					System.out.println("No invited chatter by that name: " + msg.getSender().getName());
 					continue;
 				}
-
-				c.addMessage("JOINED " + roomId + " $ ");
+				
+				// to all except the new user we send a "USR_ADDED"
+				// to the new user we send a series of USR_ADDED to denote the contents of the room.
+				
 
 			} else if(command.equals("AUTH")){
 				// We should do some error checking here. 
@@ -125,9 +127,15 @@ public class BufferPusher extends Thread {
 				ChatRoom room = server.getRoomByID(roomId);
 				Chatter c = msg.getSender();
 				if (room == null || !room.containsChatter(c)) continue;
+
 				
 				room.removeChatter(c);
-				room.distributeMessage("USR_LEFT " + c.getName() + " " + roomId + " $ ");
+				if (room.getOwner() == msg.getSender() || room.size() == 0) {
+					room.distributeMessage("RM_DESTROYED " + roomId + " $ ");
+					// remove the room. 
+				} else {
+					room.distributeMessage("USR_LEFT " + c.getName() + " " + roomId + " $ ");
+				}
 
 			} else {
 				//toss out the whole thing.

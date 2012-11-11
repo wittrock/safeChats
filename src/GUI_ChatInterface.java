@@ -7,7 +7,6 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
-import com.sun.media.sound.Toolkit;
 
 import javax.swing.border.LineBorder;
 import java.awt.Color;
@@ -22,7 +21,9 @@ import java.awt.event.KeyEvent;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.util.LinkedList;
+
+import java.io.*;
+import java.util.*;
 
 import javax.swing.JScrollPane;
 
@@ -42,7 +43,7 @@ public class GUI_ChatInterface extends JFrame {
 	private JScrollPane scrollPane;
 	private JScrollPane scrollPane_1;
 	private JTextArea chatterList;
-	private LinkedList<String> chatters;
+	private ArrayList<String> chatters;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
@@ -60,11 +61,13 @@ public class GUI_ChatInterface extends JFrame {
 		inviteField.setText("");
 	}
 	public void addChatter(String name){
+		if (name == null) return;
 		chatters.add(name);
 		updateChatterDisplay();
 	}
 	
 	public void removeChatter(String name){
+		if (!chatters.contains(name)) return;
 		chatters.remove(name);
 		updateChatterDisplay();
 	}
@@ -85,6 +88,7 @@ public class GUI_ChatInterface extends JFrame {
 	public String getChatID() { return chatID; }
 
 	public GUI_ChatInterface(Client c, String chatID) {
+		this.chatters = new ArrayList<String>();
 		this.chatID = chatID;
 		client = c;
 		Dimension dim = new Dimension(375, 285);

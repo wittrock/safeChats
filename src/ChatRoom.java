@@ -16,14 +16,27 @@ public class ChatRoom {
 		this.chatters = Collections.synchronizedList(new ArrayList<Chatter>());
 		this.invited = Collections.synchronizedList(new ArrayList<Chatter>());
 		this.owner = owner;
+		this.id = id;
 		chatters.add(owner);
 	}
 	
 	public boolean addChatter(Chatter c) {
 		if (invited.contains(c)) {
 			System.out.println("Found invited chatter: " + c.getName());
+			this.distributeMessage("USR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
 			chatters.add(c);
 			invited.remove(c);
+
+
+			c.addMessage("JOINED " + Integer.toString(this.id) + " $ ");
+			for (Chatter chatter : chatters) {
+				// makes the assumption that names are unique. 
+				if (!chatter.getName().equals(c.getName())) { 
+					c.addMessage("USR_ADDED " + chatter.getName() + " " + Integer.toString(this.id) + " $ ");
+				}
+			}
+
+			
 			return true;
 		}
 		return false;
@@ -39,6 +52,15 @@ public class ChatRoom {
 
 	public boolean containsChatter(Chatter c) {
 		return chatters.contains(c);
+	}
+
+	public Chatter getOwner() {
+		return owner;
+	}
+
+	public int size() {
+		return chatters.size();
+
 	}
 
 	public void distributeMessage(String message) {

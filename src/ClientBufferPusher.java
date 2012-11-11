@@ -123,11 +123,26 @@ public class ClientBufferPusher implements Runnable {
 					return;
 				}
 				String chatId = args[2];
-
 				// maybe throw up an accept dialog here?
-				joinChat(args[2]);
+				if (!chats.containsKey(Integer.valueOf(args[2]))) {
+					joinChat(args[2]);
+				}
 			} else if (command.equals("JOINED")) {
 				newChat(args[1]);
+			} else if (command.equals("USR_ADDED")) {
+				String chatter = args[1];
+				int roomId = Integer.valueOf(args[2]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) { return; }
+				ci.addChatter(chatter);
+
+			} else if (command.equals("USR_LEFT")) {
+				String chatter = args[1];
+				int roomId = Integer.valueOf(args[2]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) { return; }
+				ci.removeChatter(chatter);
+				
 			} else {
 				// Toss this.
 				System.out.println("Command not recognized");
