@@ -37,6 +37,15 @@ public class GUI_CreateAccount extends JFrame {
 		lblError.setText("userName has already be used");
 	}
 	
+	public void dispose() {
+		client.leaveCreateAcc();
+		super.dispose();
+	}
+	
+	public void disposeCall(){
+		super.dispose();
+	}
+	
 	public GUI_CreateAccount(Client c) {
 		
 		this.client = c;

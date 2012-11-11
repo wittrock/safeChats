@@ -13,6 +13,7 @@ public class ClientBufferPusher implements Runnable {
 	private GUI_Menu menu;
 	private Client client;
 	private final char delim = (char)254;
+	private boolean kill = false;
 	
 	public ClientBufferPusher(Client c){
 		this.writeBuffer = new LinkedBlockingQueue<String>();
@@ -32,6 +33,11 @@ public class ClientBufferPusher implements Runnable {
 		GUI_ChatInterface gci = new GUI_ChatInterface(client, chat);
 		gci.setVisible(true);
 		chats.put(chatID, gci);
+	}
+	
+	public void leaveChat(String chat){
+		Integer chatID = Integer.valueOf(chat);
+		chats.remove(chatID);
 	}
 	
 	private void INVITE(String from){
@@ -60,11 +66,11 @@ public class ClientBufferPusher implements Runnable {
 		}
 	}
 	
-	private void USR_ADDED(String chat, String user){
-		
+	private void USR_ADDED(String user){
+		menu.addUser(user);
 	}
-	private void USR_LEFT(String chat, String user){
-		
+	private void USR_LEFT( String user){
+		menu.removeUser(user);
 	}
 	
 	private void CHTR_ADDED(String chat, String user){
@@ -129,21 +135,24 @@ public class ClientBufferPusher implements Runnable {
 				}
 			} else if (command.equals("JOINED")) {
 				newChat(args[1]);
-			} else if (command.equals("USR_ADDED")) {
+			} else if (command.equals("CHTR_ADDED")) {
 				String chatter = args[1];
 				int roomId = Integer.valueOf(args[2]);
 				GUI_ChatInterface ci = chats.get(roomId);
 				if (ci == null) { return; }
 				ci.addChatter(chatter);
 
-			} else if (command.equals("USR_LEFT")) {
+			} else if (command.equals("CHTR_LEFT")) {
 				String chatter = args[1];
 				int roomId = Integer.valueOf(args[2]);
 				GUI_ChatInterface ci = chats.get(roomId);
 				if (ci == null) { return; }
 				ci.removeChatter(chatter);
-				
-			} else {
+			} else if (command.equals("USR_ADDED")){
+				USR_ADDED(args[1]);
+			}else if(command.equals("USR_LEFT")){
+				USR_LEFT(args[1]);
+			}else {
 				// Toss this.
 				System.out.println("Command not recognized");
 				return;
@@ -156,7 +165,7 @@ public class ClientBufferPusher implements Runnable {
 	}
 	
 	public void run(){
-		while(true) {
+		while(!kill) {
 			String str = getMessage();
 			System.out.println("Got message: " + str);
 			handleMessage(str);
@@ -180,5 +189,15 @@ public class ClientBufferPusher implements Runnable {
 		    	e.printStackTrace();
 		    	return null;
 		}
+	}
+	
+	public void killChats(){
+		for(GUI_ChatInterface chat: chats.values()){
+			chat.dispose();
+		}
+	}
+	
+	public void killProc(){
+		kill = true;
 	}
 }

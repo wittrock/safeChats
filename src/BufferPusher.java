@@ -110,10 +110,6 @@ public class BufferPusher extends Thread {
 					System.out.println("No invited chatter by that name: " + msg.getSender().getName());
 					continue;
 				}
-				
-				// to all except the new user we send a "USR_ADDED"
-				// to the new user we send a series of USR_ADDED to denote the contents of the room.
-				
 
 			} else if(command.equals("AUTH")){
 				// We should do some error checking here. 
@@ -121,7 +117,7 @@ public class BufferPusher extends Thread {
 				continue;
 			} else if (command.equals("NEW_ACC")){
 				server.newAcc(args[1], args[2], msg.getSender());
-			} else if (command.equals("USR_LEFT")) {
+			} else if (command.equals("CHTR_LEFT")) {
 				if (numArgs < 2) { continue; }
 				String roomId = args[1];
 				ChatRoom room = server.getRoomByID(roomId);
@@ -132,12 +128,18 @@ public class BufferPusher extends Thread {
 				room.removeChatter(c);
 				if (room.getOwner() == msg.getSender() || room.size() == 0) {
 					room.distributeMessage("RM_DESTROYED " + roomId + " $ ");
-					// remove the room. 
+					// actually remove the room. 
 				} else {
-					room.distributeMessage("USR_LEFT " + c.getName() + " " + roomId + " $ ");
+					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + roomId + " $ ");
 				}
 
-			} else {
+			} else if(command.equals("USR_LEFT")){
+				Chatter c = msg.getSender();
+				server.removeChatterFromAllRooms(c);
+				server.removeChatter(c);
+				chatters.remove(c);
+				c.stopAll();
+			}else {
 				//toss out the whole thing.
 				continue;
 			}

@@ -23,7 +23,7 @@ public class ChatRoom {
 	public boolean addChatter(Chatter c) {
 		if (invited.contains(c)) {
 			System.out.println("Found invited chatter: " + c.getName());
-			this.distributeMessage("USR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
+			this.distributeMessage("CHTR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
 			chatters.add(c);
 			invited.remove(c);
 
@@ -32,7 +32,7 @@ public class ChatRoom {
 			for (Chatter chatter : chatters) {
 				// makes the assumption that names are unique. 
 				if (!chatter.getName().equals(c.getName())) { 
-					c.addMessage("USR_ADDED " + chatter.getName() + " " + Integer.toString(this.id) + " $ ");
+					c.addMessage("CHTR_ADDED " + chatter.getName() + " " + Integer.toString(this.id) + " $ ");
 				}
 			}
 
