@@ -48,6 +48,7 @@ public class BufferPusher extends Thread {
 
 	public void run(){
 		while(true) {
+			try {
 			Message msg = getMessage();
 			String str = msg.getData();			
 			// Parse the protocol stuff out
@@ -172,6 +173,8 @@ public class BufferPusher extends Thread {
 				//toss out the whole thing. we should add logging here.
 				continue;
 			}
-		}
+			} catch (Exception e) { continue;}
+		} 
+	
 	}
 }
