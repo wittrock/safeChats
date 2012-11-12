@@ -1,6 +1,6 @@
 auth.txt
 src/auth.txt
-
+*.log
 #################
 ## Eclipse
 #################

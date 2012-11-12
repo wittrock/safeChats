@@ -23,7 +23,6 @@ public class Client {
 	private ClientBufferPusher cbp;
 	private ClientMessageListener cml;
 	
-	
 	public Client(){
 		try{
 			SocketFactory sf = SSLSocketFactory.getDefault();
@@ -47,7 +46,6 @@ public class Client {
 			}
 			
 			suites = listToArray(su);
-			
 			s.setEnabledCipherSuites(suites);
 			s.connect(new InetSocketAddress(HOST,PORT));
 			typedWriter = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));

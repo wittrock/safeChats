@@ -3,6 +3,9 @@ import java.util.*;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 public class ChatRoom {
 	
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
@@ -11,6 +14,7 @@ public class ChatRoom {
 	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out. 
 	private int id;
 	private Chatter owner;
+	private Logger log;
 	
 	public ChatRoom(int id, Chatter owner) {
 		this.chatters = Collections.synchronizedList(new ArrayList<Chatter>());
@@ -18,12 +22,14 @@ public class ChatRoom {
 		this.owner = owner;
 		this.id = id;
 		chatters.add(owner);
+		log = Logger.getLogger(ChatRoom.class);
+		PropertyConfigurator.configure("log4j.properties");
 	}
 	
 	public boolean addChatter(Chatter c) {
 		if (!invited.contains(c)) { return false; }
 
-		System.out.println("Found invited chatter: " + c.getName());
+		log.trace("Found invited chatter: " + c.getName());
 
 		this.distributeMessage("CHTR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
 
@@ -66,7 +72,7 @@ public class ChatRoom {
 	}
 
 	public void distributeMessage(String message) {
-		System.out.println("Pushing a message to chatters: " + message);
+		log.trace("Pushing a message to chatters: " + message);
 		for(Chatter c : this.chatters) {
 			c.addMessage(message);
 		}

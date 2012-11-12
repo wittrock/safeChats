@@ -7,14 +7,22 @@ import java.io.*;
 import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 public class ChatterWriter extends ChatterHandler {
 	
 	/* A private blocking queue to add global messages to. */
 	private LinkedBlockingQueue<String> writeBuffer;
+	private Logger log;
+	private Chatter chatter;
 
-	public ChatterWriter(Server server, Socket sock) {
+	public ChatterWriter(Server server, Socket sock, Chatter chatter) {
 		super(server, sock);
 		writeBuffer = new LinkedBlockingQueue<String>();
+		log = Logger.getLogger(ChatterWriter.class);
+		PropertyConfigurator.configure("log4j.properties");
+		this.chatter=chatter;
 	}
 
 	/*
@@ -25,7 +33,7 @@ public class ChatterWriter extends ChatterHandler {
 		try {
 			writeBuffer.put(message);
 		} catch (InterruptedException e) {
-			System.out.println("ChatterWriter was interrupted.");
+			log.error("ChatterWriter was interrupted."+chatter.getName());
 			e.printStackTrace();
 			return;
 		}
@@ -45,7 +53,7 @@ public class ChatterWriter extends ChatterHandler {
 				str = writeBuffer.take();
 				w.write(str + '\n');
 				w.flush();
-				System.out.println("ChatterWriter: sent a message -- " + str);
+				log.trace(chatter.getName()+": sent a message -- " + str);
 			}
 	
 		} catch(Exception e) { /* Again, I know this sucks, but we wanted to get something out the door */

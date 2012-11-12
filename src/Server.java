@@ -13,6 +13,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 import java.util.concurrent.LinkedBlockingQueue;
 import java.security.*;
 
@@ -24,9 +28,13 @@ public class Server {
 	private Map<String, String> authData;
 	private List<byte[]> saltsUsed;
 	private SecureRandom random;
+	private Logger log;
 
 	public Server() {
-		System.out.println("Started the server...");
+		log = Logger.getLogger(Server.class);
+		PropertyConfigurator.configure("log4j.properties");
+		log.trace("Started the server...");
+		
 		chatters = Collections.synchronizedList(new ArrayList<Chatter>()); //Chatters is a synchronized list. 
 		rooms = Collections.synchronizedMap(new HashMap<Integer, ChatRoom>());
 		authData = Collections.synchronizedMap(new HashMap<String,String>());
@@ -37,7 +45,7 @@ public class Server {
 		try {
 		random = SecureRandom.getInstance("SHA1PRNG");
 		} catch (NoSuchAlgorithmException e) {
-			System.out.println("Cannot instantiate SecureRandom with SHA1PRNG");
+			log.fatal("Cannot instantiate SecureRandom with SHA1PRNG");
 			e.printStackTrace();
 		}	
 
@@ -62,11 +70,11 @@ public class Server {
 			// Accept connections forever, stick them on the chatters list. 
 			while(true) {
 				Socket s = ss.accept();
-				System.out.println("Got a new connection!");
+				log.trace("A new connection was established");
 				String name = Integer.toString(numChatters);
 
 				Chatter chatter = new Chatter(name);
-				ChatterWriter writer = new ChatterWriter(this, s);
+				ChatterWriter writer = new ChatterWriter(this, s, chatter);
 				ChatterReader reader = new ChatterReader(this, s, chatter);
 				chatter.setReader(reader);
 				chatter.setWriter(writer);
@@ -165,7 +173,7 @@ public class Server {
 				break;
 			}
 		}
-		System.out.println("Removed a chatter. Num chatters: " + chatters.size());
+		log.trace("Removed a chatter. Num chatters: " + chatters.size());
 	}
 	
 	public void authUser(String userName, String password, Chatter user){
@@ -255,7 +263,6 @@ public class Server {
 			BufferedReader in = new BufferedReader(new FileReader("auth.txt"));
 			String line = "";
 			while((line=in.readLine())!=null){
-				System.out.println(line);
 				String[] s =line.split("\t");
 				authData.put(s[0], s[1]);
 				String[] t = s[1].split("#");

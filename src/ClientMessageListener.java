@@ -23,7 +23,7 @@ public class ClientMessageListener implements Runnable {
 		    return;
 		}
 	}
-		
+	
 	public void run(){	
 		System.out.println("ClientMessageListener starting to run...");
 		try{

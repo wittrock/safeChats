@@ -1,3 +1,6 @@
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 /* 
  * John Wittrock, Greg Herpel, 2012 
  * Class to hold all of the data associated with the chatter.
@@ -11,6 +14,7 @@ public class Chatter {
 	ChatterReader reader = null;
 	Thread writerThread;
 	Thread readerThread;
+	private Logger log;
  
 	public void addMessage(String str) {
 		if (authenticated == false) return;
@@ -32,7 +36,6 @@ public class Chatter {
 
 	public void setReader(ChatterReader reader) {
 		if (this.reader == null) { 
-			System.out.println("Really starting a new Reader");
 			this.reader = reader;
 			readerThread = new Thread(this.reader);
 
@@ -59,6 +62,8 @@ public class Chatter {
 	public Chatter(String name) {
 		this.name = name;
 		this.authenticated = false;
-		System.out.println("Started a new Chatter " + name);
+		log = Logger.getLogger(Chatter.class);
+		PropertyConfigurator.configure("log4j.properties");
+		log.trace("Started a new Chatter " + name);
 	}
 }

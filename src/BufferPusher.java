@@ -7,23 +7,29 @@
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+
 
 public class BufferPusher extends Thread {
 	private List<Chatter> chatters;
 	private LinkedBlockingQueue<Message> writeBuffer;
 	private Server server;
+	private Logger log;
 
 	public BufferPusher(List<Chatter> chatters, LinkedBlockingQueue<Message> writeBuffer, Server server) {
 		this.chatters = chatters;
 		this.writeBuffer = writeBuffer;
 		this.server = server;
+		log = Logger.getLogger(BufferPusher.class);
+		PropertyConfigurator.configure("log4j.properties");
 	}
 
 	public Message getMessage() {
 		try {
 		    	return writeBuffer.take();
 		} catch (InterruptedException e) {
-		    	System.out.println("BufferPusher InterruptedException!");
+		    	log.error("BufferPusher InterruptedException for writeBuffer");
 		    	e.printStackTrace();
 		    	return null;
 		}
@@ -33,8 +39,7 @@ public class BufferPusher extends Thread {
 	public void run(){
 		while(true) {
 			Message msg = getMessage();
-			String str = msg.getData();
-			System.out.println("Got message: " + str);			
+			String str = msg.getData();			
 			// Parse the protocol stuff out
 			int protocolEnd = str.indexOf((int)'$');
 			if (protocolEnd == -1) {
@@ -48,9 +53,11 @@ public class BufferPusher extends Thread {
 			String[] args = protocol.split(" ");
 			int numArgs = args.length;
 			String command = args[0];
+			
+			log.trace(msg.getSender().getName()+": Got " + command +" message");
 
 			if (command.equals("CREATE")) {
-				System.out.println("Sending create command to " + msg.getSender().getName());
+				log.trace("Sending create command to " + msg.getSender().getName());
 				server.createRoom(msg.getSender());
 				continue;
 
@@ -108,7 +115,7 @@ public class BufferPusher extends Thread {
 				Chatter c = msg.getSender();
 				ChatRoom room = server.getRoomByID(roomId);
 				if (c == null || room == null || !room.addChatter(c)) {
-					System.out.println("No invited chatter by that name: " + msg.getSender().getName());
+					log.error("No invited chatter by that name: " + msg.getSender().getName());
 					continue;
 				}
 
@@ -139,7 +146,7 @@ public class BufferPusher extends Thread {
 
 					// actually remove the room. 
 					server.removeRoom(room.getID());
-					System.out.println("Room destroyed: " + room.getID());
+					log.trace("Room destroyed: " + room.getID());
 				} else {
 					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + roomId + " $ ");
 				}
