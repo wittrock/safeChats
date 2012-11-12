@@ -22,7 +22,11 @@ public class GUI_SignIn extends JFrame {
 	private void attemptAuth(){
 		String pass = String.valueOf(passwordField.getPassword());
 		String userName = userNameField.getText();
-		client.authUser(userName,pass);
+		if(userName.contains("$")||userName.contains(" ")||pass.contains("$")||pass.contains(" ")){
+			authFailed();
+		}else{
+			client.authUser(userName,pass);
+		}
 	}
 	
 	private void createNew(){
@@ -77,7 +81,7 @@ public class GUI_SignIn extends JFrame {
 				createNew();
 			}
 		});
-		btnClickHere.setBounds(102, 27, 89, 19);
+		btnClickHere.setBounds(102, 27, 128, 19);
 		getContentPane().add(btnClickHere);
 		
 		JButton btnSignIn = new JButton("Sign In");

@@ -33,7 +33,7 @@ public class ChatterWriter extends ChatterHandler {
 		try {
 			writeBuffer.put(message);
 		} catch (InterruptedException e) {
-			log.error("ChatterWriter was interrupted."+chatter.getName());
+			log.error("ChatterWriter was interrupted. "+chatter.getName());
 			e.printStackTrace();
 			return;
 		}
@@ -51,9 +51,9 @@ public class ChatterWriter extends ChatterHandler {
 			/* Get a message from the queue, write it to the socket. */
 			while(true && this.running) {
 				str = writeBuffer.take();
+				log.trace(chatter.getName()+": sending a message to");
 				w.write(str + '\n');
 				w.flush();
-				log.trace(chatter.getName()+": sent a message -- " + str);
 			}
 	
 		} catch(Exception e) { /* Again, I know this sucks, but we wanted to get something out the door */

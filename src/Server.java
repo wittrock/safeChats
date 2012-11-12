@@ -243,12 +243,14 @@ public class Server {
 	}
 	public void sendToAll(String str){
 		for(Chatter c: chatters){
-			c.addMessage(str);
+			if(c.isAuthenticated())
+				c.addMessage(str);
 		}
 	}
 	public void sendAllNames(Chatter c){
 		for(Chatter chat: chatters){
-			c.addMessage("USR_ADDED "+chat.getName()+"$ ");
+			if(chat.isAuthenticated())
+				c.addMessage("USR_ADDED "+chat.getName()+"$ ");
 		}
 	}
 

@@ -1,6 +1,4 @@
-import java.io.*;
 import java.util.*;
-import java.net.Socket;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
@@ -72,7 +70,7 @@ public class ChatRoom {
 	}
 
 	public void distributeMessage(String message) {
-		log.trace("Pushing a message to chatters: " + message);
+		log.trace("Room"+id+": Pushing a message to chatters");
 		for(Chatter c : this.chatters) {
 			c.addMessage(message);
 		}

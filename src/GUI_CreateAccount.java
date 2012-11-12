@@ -24,7 +24,12 @@ public class GUI_CreateAccount extends JFrame {
 		String pass = String.valueOf(passwordField.getPassword());
 		String passCheck =String.valueOf(passwordField_1.getPassword());
 		if(pass.equals(passCheck)){
-			client.newAcc(textField.getText(),pass);
+			String name = textField.getText();
+			if(name.contains("$")||name.contains(" ")||pass.contains("$")||pass.contains(" ")){
+				lblError.setText("Invalid Character Used ($, )");
+			}else{
+				client.newAcc(name,pass);
+			}
 		}
 		else{
 			lblError.setText("passwords did not match");
@@ -98,7 +103,7 @@ public class GUI_CreateAccount extends JFrame {
 		lblError = new JLabel("");
 		lblError.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblError.setForeground(Color.RED);
-		lblError.setBounds(152, 35, 141, 14);
+		lblError.setBounds(33, 35, 260, 14);
 		getContentPane().add(lblError);
 	}
 }
