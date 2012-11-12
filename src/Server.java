@@ -156,6 +156,7 @@ public class Server {
 			if (chatters.get(i).getName().equals(name)) {
 				Chatter c = chatters.remove(i);
 				c.stopAll();
+				sendToAll("USR_LEFT " + c.getName() + " $ ");
 				break;
 			}
 		}
@@ -170,7 +171,7 @@ public class Server {
 			String sH = authData.get(userName);
 			
 			if(sH == null){
-				user.addMessage("AUTH false$ ");
+				user.addUnauthenticatedMessage("AUTH false$ ");
 				return;
 			}
 			String[] div = sH.split("#");
@@ -186,7 +187,7 @@ public class Server {
 				sendToAll("USR_ADDED " + user.getName()+"$ ");
 			}
 			else{
-				user.addMessage("AUTH false$ ");
+				user.addUnauthenticatedMessage("AUTH false$ ");
 			}
 			
 		} catch (NoSuchAlgorithmException e) {
@@ -215,13 +216,13 @@ public class Server {
 				
 				user.authUser();
 				user.name = userName;
-				user.addMessage("NEW_ACC true$ ");
+				user.addUnauthenticatedMessage("NEW_ACC true$ ");
 				
 				sendAllNames(user);
 				sendToAll("USR_ADDED " + user.getName()+"$ ");
 			}
 			else{
-				user.addMessage("NEW_ACC false$ ");
+				user.addUnauthenticatedMessage("NEW_ACC false$ ");
 			}
 		}catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();

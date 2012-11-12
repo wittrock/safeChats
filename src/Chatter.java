@@ -13,6 +13,11 @@ public class Chatter {
 	Thread readerThread;
  
 	public void addMessage(String str) {
+		if (authenticated == false) return;
+		writer.addMessage(str);
+	}
+
+	public void addUnauthenticatedMessage(String str) {
 		writer.addMessage(str);
 	}
 	

@@ -1,7 +1,7 @@
-/* 
- * This is going to become more of a processing class than anything else. 
- * This, or a closely-related class will actually have to parse status messages and perform 
- * the necessary operations. Still more to do here. 
+/* John Wittrock, Greg Herpel 2012 This is going to become more of a
+ * processing class than anything else.  This, or a closely-related
+ * class will actually have to parse protocol messages and perform the
+ * necessary operations. Still more to do here.
  */ 
 
 import java.util.*;
@@ -53,6 +53,7 @@ public class BufferPusher extends Thread {
 				System.out.println("Sending create command to " + msg.getSender().getName());
 				server.createRoom(msg.getSender());
 				continue;
+
 			} else if (command.equals("MSG")) {
 				if (numArgs < 2) {
 					//incorrectly formatted message. Log here?
@@ -115,8 +116,10 @@ public class BufferPusher extends Thread {
 				// We should do some error checking here. 
 				server.authUser(args[1],args[2],msg.getSender());
 				continue;
+
 			} else if (command.equals("NEW_ACC")){
 				server.newAcc(args[1], args[2], msg.getSender());
+
 			} else if (command.equals("CHTR_LEFT")) {
 				if (numArgs < 2) { continue; }
 				String roomId = args[1];
@@ -124,11 +127,19 @@ public class BufferPusher extends Thread {
 				Chatter c = msg.getSender();
 				if (room == null || !room.containsChatter(c)) continue;
 
-				
 				room.removeChatter(c);
-				if (room.getOwner() == msg.getSender() || room.size() == 0) {
-					room.distributeMessage("RM_DESTROYED " + roomId + " $ ");
+
+				if (room.size() == 0) {
+					// commenting this out for
+					// later when we may want to
+					// give more priveleges to
+					// owners
+
+					// room.distributeMessage("RM_DESTROYED " + roomId + " $ ");
+
 					// actually remove the room. 
+					server.removeRoom(room.getID());
+					System.out.println("Room destroyed: " + room.getID());
 				} else {
 					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + roomId + " $ ");
 				}
@@ -140,11 +151,9 @@ public class BufferPusher extends Thread {
 				chatters.remove(c);
 				c.stopAll();
 			}else {
-				//toss out the whole thing.
+				//toss out the whole thing. we should add logging here.
 				continue;
 			}
-
 		}
 	}
-
 }

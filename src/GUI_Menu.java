@@ -51,6 +51,7 @@ public class GUI_Menu extends JFrame {
 		setResizable(true);
 		setSize(193,334);
 		users = new LinkedList<String>();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("173px:grow"),},
 			new RowSpec[] {
