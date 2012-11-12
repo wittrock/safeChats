@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.*;
@@ -44,8 +43,14 @@ public class Server {
 
 		try{
 			// Start accepting requests. 
-			ServerSocketFactory f = SSLServerSocketFactory.getDefault(); 
-			ServerSocket ss = f.createServerSocket(PORT);
+			ServerSocketFactory f = SSLServerSocketFactory.getDefault();
+			SSLServerSocket ss;
+			String[] suites = {"TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
+					"TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
+					"TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
+					"TLS_DHE_DSS_WITH_AES_256_CBC_SHA"};
+			ss = (SSLServerSocket)f.createServerSocket(PORT);
+			ss.setEnabledCipherSuites(suites);
 	
 			// For now, this will also be the name of the chatter. 
 			int numChatters = 0;
@@ -240,6 +245,7 @@ public class Server {
 
 	/* Main method. Not much else to say about it. */
 	public static void main(String[] args) { 
+		
 		Server server = new Server();
 	}
 	

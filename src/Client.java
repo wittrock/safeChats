@@ -5,16 +5,18 @@
 
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
-import java.net.Socket;
+import java.net.InetSocketAddress;
+import java.util.LinkedList;
+
+import javax.net.ssl.SSLSocket;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
-import javax.swing.JFrame;
 
 
 public class Client {
 	private static final int PORT = 46754;
 	private static String HOST;
-	private Socket s;
+	private SSLSocket s;
 	private BufferedWriter typedWriter;
 	private GUI_SignIn gsi;
 	private GUI_CreateAccount gca;
@@ -25,12 +27,42 @@ public class Client {
 	public Client(){
 		try{
 			SocketFactory sf = SSLSocketFactory.getDefault();
-			s = sf.createSocket(HOST,PORT);
+			LinkedList<String> su = new LinkedList<String>();
+			su.add("TLS_DHE_RSA_WITH_AES_256_CBC_SHA");
+			su.add("TLS_DHE_RSA_WITH_AES_128_CBC_SHA");
+			su.add("TLS_DHE_DSS_WITH_AES_256_CBC_SHA");
+			su.add("TLS_DHE_DSS_WITH_AES_128_CBC_SHA");
+			s = (SSLSocket)sf.createSocket();
+			String[] suites = s.getSupportedCipherSuites();
+			for(int i=0;i<su.size();i++){
+				boolean counter = true;
+				for(String str: suites){
+					if(str.equals(su.get(i)))
+						counter = false;
+				}
+				if(counter){
+					su.remove(su.get(i));
+					i--;
+				}
+			}
+			
+			suites = listToArray(su);
+			
+			s.setEnabledCipherSuites(suites);
+			s.connect(new InetSocketAddress(HOST,PORT));
 			typedWriter = new BufferedWriter(new OutputStreamWriter(s.getOutputStream()));
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
+	}
+	
+	public String[] listToArray(LinkedList<String> list){
+		String[] ret = new String[list.size()];
+		for(int i=0;i<list.size();i++){
+			ret[i] = list.get(i);
+		}
+		return ret;
 	}
 	
 	public void authed(){
