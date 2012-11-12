@@ -131,11 +131,11 @@ public class BufferPusher extends Thread {
 
 			} else if(command.equals("AUTH")){
 				// We should do some error checking here.
-				if (numArgs !=2){continue;}
+				if (numArgs !=3){continue;}
 				server.authUser(args[1],args[2],msg.getSender());
-				continue;
 
 			} else if (command.equals("NEW_ACC")){
+				if (numArgs !=3){continue;}
 				server.newAcc(args[1], args[2], msg.getSender());
 
 			} else if (command.equals("CHTR_LEFT")) {
