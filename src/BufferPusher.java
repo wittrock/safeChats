@@ -120,7 +120,8 @@ public class BufferPusher extends Thread {
 				}
 
 			} else if(command.equals("AUTH")){
-				// We should do some error checking here. 
+				// We should do some error checking here.
+				if (numArgs !=2){continue;}
 				server.authUser(args[1],args[2],msg.getSender());
 				continue;
 
