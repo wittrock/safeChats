@@ -67,9 +67,11 @@ public class ClientBufferPusher implements Runnable {
 	}
 	
 	private void USR_ADDED(String user){
+		if (menu == null) return;
 		menu.addUser(user);
 	}
 	private void USR_LEFT( String user){
+		if (menu == null) return;
 		menu.removeUser(user);
 	}
 	

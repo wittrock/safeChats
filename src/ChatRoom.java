@@ -21,25 +21,24 @@ public class ChatRoom {
 	}
 	
 	public boolean addChatter(Chatter c) {
-		if (invited.contains(c)) {
-			System.out.println("Found invited chatter: " + c.getName());
-			this.distributeMessage("CHTR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
-			chatters.add(c);
-			invited.remove(c);
+		if (!invited.contains(c)) { return false; }
 
+		System.out.println("Found invited chatter: " + c.getName());
 
-			c.addMessage("JOINED " + Integer.toString(this.id) + " $ ");
-			for (Chatter chatter : chatters) {
-				// makes the assumption that names are unique. 
-				if (!chatter.getName().equals(c.getName())) { 
-					c.addMessage("CHTR_ADDED " + chatter.getName() + " " + Integer.toString(this.id) + " $ ");
-				}
+		this.distributeMessage("CHTR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
+
+		chatters.add(c);
+		invited.remove(c);
+		c.addMessage("JOINED " + Integer.toString(this.id) + " $ ");
+
+		for (Chatter chatter : chatters) {
+			// makes the assumption that names are unique. 
+			if (!chatter.getName().equals(c.getName())) { 
+				c.addMessage("CHTR_ADDED " + chatter.getName() + " " + Integer.toString(this.id) + " $ ");
 			}
-
-			
-			return true;
 		}
-		return false;
+			
+		return true;
 	}
 
 	public void inviteChatter(Chatter c) {
@@ -60,7 +59,10 @@ public class ChatRoom {
 
 	public int size() {
 		return chatters.size();
+	}
 
+	public int getID() {
+		return this.id;
 	}
 
 	public void distributeMessage(String message) {
