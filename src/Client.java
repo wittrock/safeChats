@@ -26,14 +26,14 @@ public class Client {
 	public Client(){
 		try{
 			SocketFactory sf = SSLSocketFactory.getDefault();
-			LinkedList<String> su = new LinkedList<String>();
+			LinkedList<String> su = new LinkedList<String>(); //list of cipherSuites we will use
 			su.add("TLS_DHE_RSA_WITH_AES_256_CBC_SHA");
 			su.add("TLS_DHE_RSA_WITH_AES_128_CBC_SHA");
 			su.add("TLS_DHE_DSS_WITH_AES_256_CBC_SHA");
 			su.add("TLS_DHE_DSS_WITH_AES_128_CBC_SHA");
 			s = (SSLSocket)sf.createSocket();
 			String[] suites = s.getSupportedCipherSuites();
-			for(int i=0;i<su.size();i++){
+			for(int i=0;i<su.size();i++){	//make sure cipherSuites are supported
 				boolean counter = true;
 				for(String str: suites){
 					if(str.equals(su.get(i)))
