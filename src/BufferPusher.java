@@ -173,7 +173,10 @@ public class BufferPusher extends Thread {
 				//toss out the whole thing. we should add logging here.
 				continue;
 			}
-			} catch (Exception e) { continue;}
+			} catch (Exception e) { 
+				log.error ("Exception in runloop: " + e.getMessage());
+				continue;
+			}
 		} 
 	
 	}
