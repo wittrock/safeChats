@@ -12,7 +12,6 @@ public class ClientBufferPusher implements Runnable {
 	private HashMap<Integer,GUI_ChatInterface> chats;
 	private GUI_Menu menu;
 	private Client client;
-	private final char delim = (char)254;
 	private boolean kill = false;
 	
 	public ClientBufferPusher(Client c){

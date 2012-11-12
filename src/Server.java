@@ -254,11 +254,6 @@ public class Server {
 		}
 	}
 
-	/* Main method. Not much else to say about it. */
-	public static void main(String[] args) { 
-		
-		Server server = new Server();
-	}
 	
 	private void readAuthFile(){
 		try {
@@ -299,6 +294,11 @@ public class Server {
 			ret[i] = Byte.valueOf(u[i]);
 		}
 		return ret;
+	}
+
+	/* Main method. Not much else to say about it. */
+	public static void main(String[] args) { 
+		new Server();
 	}
 	
 }

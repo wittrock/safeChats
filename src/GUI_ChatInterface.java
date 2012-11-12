@@ -77,7 +77,6 @@ public class GUI_ChatInterface extends JFrame {
 		}
 	}
 
-
 	public void dispose() {
 		client.leaveRoom(this);
 		super.dispose();
