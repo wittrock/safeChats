@@ -25,7 +25,7 @@ public class BufferPusher extends Thread {
 		PropertyConfigurator.configure("log4j.properties");
 	}
 
-	public Message getMessage() {
+	private Message getMessage() {
 		try {
 		    	return writeBuffer.take();
 		} catch (InterruptedException e) {
@@ -33,6 +33,16 @@ public class BufferPusher extends Thread {
 		    	e.printStackTrace();
 		    	return null;
 		}
+	}
+
+	private static int countChar(String str, char c) {
+		int count = 0;
+		for (int i = 0; i < str.length() ; i++) {
+			if (c == str.charAt(i)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 
@@ -79,7 +89,7 @@ public class BufferPusher extends Thread {
 				}
 
 			} else if (command.equals("INVITE")) {
-				if(numArgs < 3) {
+				if(numArgs < 3 || countChar(str, '$') > 1) {
 					continue; // invalid invite message. Log here?
 				}
 
