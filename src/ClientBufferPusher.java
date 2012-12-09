@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Arrays;
 
 /*
  * Greg Herpel, John Wittrock, 2012
@@ -151,9 +152,31 @@ public class ClientBufferPusher implements Runnable {
 				ci.removeChatter(chatter);
 			} else if (command.equals("USR_ADDED")){
 				USR_ADDED(args[1]);
-			}else if(command.equals("USR_LEFT")){
+			} else if (command.equals("USR_LEFT")){
 				USR_LEFT(args[1]);
-			}else {
+
+			} else if (command.equals("BEGIN_ENC")) {
+				int roomId = Integer.valueOf(args[1]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) return;
+				
+				ci.genKeys();
+
+			} else if (command.equals("ZS")) {
+				int roomId = Integer.valueOf(args[1]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) return;
+
+				ci.broadcastX(args[2], args[3]);
+
+			} else if (command.equals("XS")) {
+				int roomId = Integer.valueOf(args[1]);
+				GUI_ChatInterface ci = chats.get(roomId);
+				if (ci == null) return;
+				
+				ci.receiveXs(args[2], args[3], Arrays.copyOfRange(args, 4, args.length));
+				
+			} else {
 				// Toss this.
 				System.out.println("Command not recognized");
 				return;
