@@ -30,11 +30,11 @@ public class ChatterReader extends ChatterHandler {
 		try{
 			BufferedReader w = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-			String str = null;
-			while ((str = w.readLine()) != null) { // While the stream is still open
+			String c = null;
+			while ((c = w.readLine()) != null) { // While the stream is still open
 				log.trace(chatter.getName()+": Received a message from");
 				//				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
-				server.addMessage(new Message(str, this.chatter));
+				server.addMessage(new Message(String.valueOf(c), this.chatter));
 			}
 		} catch (Exception e) {
 			log.trace("Chatter " + this.chatter.getName() + "  exited with exception.");			

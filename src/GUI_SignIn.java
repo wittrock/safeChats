@@ -20,9 +20,11 @@ public class GUI_SignIn extends JFrame {
 	private Client client;
 	
 	private void attemptAuth(){
-		String pass = String.valueOf(passwordField.getPassword());
+		char[] pass = passwordField.getPassword();
+		StringBuffer pword = new StringBuffer();
+		pword.append(pass);
 		String userName = userNameField.getText();
-		if(userName.contains("$")||userName.contains(" ")||pass.contains("$")||pass.contains(" ")){
+		if(userName.contains("$")||userName.contains(" ")||pword.indexOf("$")!=-1||pword.indexOf(" ")!=-1){
 			authFailed();
 		}else{
 			client.authUser(userName,pass);

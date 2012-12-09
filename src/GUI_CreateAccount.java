@@ -21,14 +21,17 @@ public class GUI_CreateAccount extends JFrame {
 	private Client client;
 	
 	private void NEW_ACC(){
-		String pass = String.valueOf(passwordField.getPassword());
-		String passCheck =String.valueOf(passwordField_1.getPassword());
+		StringBuffer pass = new StringBuffer();
+		StringBuffer passCheck = new StringBuffer();
+		char[] pword = passwordField.getPassword();
+		pass.append(pword);
+		passCheck.append(passwordField_1.getPassword());
 		if(pass.equals(passCheck)){
 			String name = textField.getText();
-			if(name.contains("$")||name.contains(" ")||pass.contains("$")||pass.contains(" ")){
+			if(name.contains("$")||name.contains(" ")||pass.indexOf("$")!=-1||pass.indexOf(" ")!=-1){
 				lblError.setText("Invalid Character Used ($, )");
 			}else{
-				client.newAcc(name,pass);
+				client.newAcc(name,pword);
 			}
 		}
 		else{

@@ -95,20 +95,32 @@ public class Client {
 
 	public void createChat() {
 		System.out.println("Client: creating message.");
-		sendMessage("CREATE$ ");
+		sendMessage(("CREATE$ ").toCharArray());
 	}
 	
-	public void authUser(String userName, String password) {
-		sendMessage("AUTH "+userName+" "+password+"$ ");
+	public void authUser(String userName, char[] password) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("AUTH "+userName+" ");
+		sb.append(password);
+		sb.append("$ ");
+		char[] ch = new char[sb.length()];
+		sb.getChars(0, sb.length(), ch, 0);
+		sendMessage(ch);
 	}
 	
-	public void newAcc(String userName, String password){
-		sendMessage("NEW_ACC "+userName+" "+password+"$ ");
+	public void newAcc(String userName, char[] password){
+		StringBuffer sb = new StringBuffer();
+		sb.append("NEW_ACC "+userName+" ");
+		sb.append(password);
+		sb.append("$ ");
+		char[] ch = new char[sb.length()];
+		sb.getChars(0, sb.length(), ch, 0);
+		sendMessage(ch);
 	}
 	
 
 	public void leaveRoom(GUI_ChatInterface chat) {
-		sendMessage("CHTR_LEFT " + chat.getChatID() + " $ ");
+		sendMessage(("CHTR_LEFT " + chat.getChatID() + " $ ").toCharArray());
 		cbp.leaveChat(chat.getChatID());
 	}
 	
@@ -125,16 +137,19 @@ public class Client {
 		leaveUser();
 	}
 	public void leaveUser(){
-		sendMessage("USR_LEFT$ ");
+		sendMessage(("USR_LEFT$ ").toCharArray());
 		cbp.killProc();
 		cml.killProc();
 	}
 	
-	public synchronized void sendMessage(String str){
+	public synchronized void sendMessage(char[] str){
 		try{
-			typedWriter.write(str+"\n");
+			String s = String.valueOf(str);
+			System.out.println(s);
+			typedWriter.write(str, 0, str.length);
+			typedWriter.newLine();
+			System.out.println("here");
 			typedWriter.flush();
-			System.out.println("Sent message: " + str);
 		}catch (Exception e) {
 			System.out.println("Caught exception in sendMessage");
 			e.printStackTrace();

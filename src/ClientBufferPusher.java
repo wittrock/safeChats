@@ -82,7 +82,7 @@ public class ClientBufferPusher implements Runnable {
 	}
 	
 	private void joinChat(String chat) {
-		client.sendMessage("JOIN " + chat + " $ ");
+		client.sendMessage(("JOIN " + chat + " $ ").toCharArray());
 	}
 
 	private void handleMessage(String message){

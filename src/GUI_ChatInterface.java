@@ -47,14 +47,14 @@ public class GUI_ChatInterface extends JFrame {
 	}
 	
 	public void sendUserText(){
-		client.sendMessage("MSG " + chatID + " $ " + userText.getText());
+		client.sendMessage(("MSG " + chatID + " $ " + userText.getText()).toCharArray());
 		userText.setText("");
 	}
 	
 	public void inviteUser() {
 		String invite = inviteField.getText();
 		if (invite.length() <= 0) return;
-		client.sendMessage("INVITE " + invite + " " + chatID + " $ ");
+		client.sendMessage(("INVITE " + invite + " " + chatID + " $ ").toCharArray());
 		inviteField.setText("");
 	}
 	public void addChatter(String name){
