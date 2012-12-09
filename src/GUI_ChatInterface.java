@@ -23,7 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.LinkedList;
 import javax.swing.JScrollPane;
-
+import java.math.*;
 
 public class GUI_ChatInterface extends JFrame {
 
@@ -41,6 +41,7 @@ public class GUI_ChatInterface extends JFrame {
 	private JScrollPane scrollPane_1;
 	private JTextArea chatterList;
 	private ArrayList<String> chatters;
+	private ConferenceKey ckey;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
@@ -77,6 +78,36 @@ public class GUI_ChatInterface extends JFrame {
 		}
 	}
 
+	/* Begin conference-keying interface functions */
+	public void startEncryption() {
+		client.sendMessage("ENCRYPT " + chatID + " $ ");
+	}
+	
+	public void genKeys() {
+		ckey = new ConferenceKey();
+		client.sendMessage("PUB_KEY " + chatID + " " + ckey.getZ() + " $ ");
+	}
+
+	public void broadcastX(String l, String r) {
+		if (this.ckey == null) return;
+		BigInteger left = new BigInteger(l);
+		BigInteger right = new BigInteger(r);
+		client.sendMessage("X_KEY " + chatID + " " + ckey.generateX(left, right).toString() + " $ ");
+	}
+
+	public void receiveXs(String indexStr, String leftZ, String[] xs) {
+		if (this.ckey == null) return;
+		int index = Integer.parseInt(indexStr);
+		BigInteger z = new BigInteger(leftZ);
+		BigInteger[] xs_ints = new BigInteger[xs.length];
+		for (int i = 0; i < xs.length; i++) {
+			xs_ints[i] = new BigInteger(xs[i]);
+		}
+		ckey.calculateSharedKey(xs_ints, index, z);
+	}
+
+	/* End conference-keying interface functions */
+
 	public void dispose() {
 		client.leaveRoom(this);
 		super.dispose();
@@ -90,6 +121,7 @@ public class GUI_ChatInterface extends JFrame {
 
 	public GUI_ChatInterface(Client c, String chatID) {
 		this.chatters = new ArrayList<String>();
+		this.ckey = null;
 		this.chatID = chatID;
 		client = c;
 		Dimension dim = new Dimension(375, 285);

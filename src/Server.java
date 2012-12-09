@@ -47,7 +47,7 @@ public class Server {
 		} catch (NoSuchAlgorithmException e) {
 			log.fatal("Cannot instantiate SecureRandom with SHA1PRNG");
 			e.printStackTrace();
-			System.exit();
+			System.exit(-1);
 		}	
 
 		try{
