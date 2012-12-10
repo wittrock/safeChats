@@ -67,6 +67,7 @@ public class ConferenceKey {
 		BigInteger x = right.multiply(left.modInverse(this.modulus));
 		x = x.mod(this.modulus);
 		x = x.modPow(this.privateKey, this.modulus);
+		System.out.println("X generated: " + x);
 		return x;
 	}
 	
@@ -93,6 +94,7 @@ public class ConferenceKey {
 		
 		sharedKey = sharedKey.mod(modulus);
 		this.sKey = sharedKey;
+		System.out.println("Calculated shared key: " + sharedKey);
 		return sharedKey;
 	}
 	

@@ -186,7 +186,7 @@ public class BufferPusher extends Thread {
 
 					room.addZ(c, args[2]);
 					
-				} else if (command.equals("X")) {
+				} else if (command.equals("X_KEY")) {
 					String roomId = args[1];
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();

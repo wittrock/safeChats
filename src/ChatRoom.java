@@ -61,7 +61,9 @@ public class ChatRoom {
 	public void addZ(Chatter c, String z) {
 		/* Have to remember to turn adding users off */
 		/* Dynamic re-encryption will be a problem. */
+
 		if (numZs == 0 || zs == null) {
+			System.out.println("initializing zs of size " + chatters.size());
 			zs = new String[chatters.size()];
 		}
 		
@@ -79,7 +81,8 @@ public class ChatRoom {
 					lIndex += zs.length;
 				}
 
-				c.addMessage("ZS " + this.id + " " + zs[lIndex] + " " + zs[rIndex] + " $ ");
+				chatter.addMessage("ZS " + this.id + " " + zs[lIndex] + " " + zs[rIndex] + " $ ");
+				System.out.println("Sent zs to " + c.getName());
 			}
 		}
 	}
@@ -105,12 +108,14 @@ public class ChatRoom {
 				xStr = xStr + " " + xs[i];
 			}
 
+			System.out.println("xs: " + xStr);
+
 			for (int i = 0; i < xs.length; i++) {
 				Chatter chatter = chatters.get(i);
 				int leftZIndex = (i - 1) % (xs.length);
 				if (leftZIndex < 0) leftZIndex += xs.length;
 				String leftZ = zs[leftZIndex];
-				String msg = "XS " + this.id + " " + i + " " + leftZ + " " + xStr + " $ ";
+				String msg = "XS " + this.id + " " + i + " " + leftZ + xStr + " $ ";
 				chatter.addMessage(msg);
 			}
 		}

@@ -82,19 +82,19 @@ public class GUI_ChatInterface extends JFrame {
 
 	/* Begin conference-keying interface functions */
 	public void startEncryption() {
-		client.sendMessage("ENCRYPT " + chatID + " $ ");
+		client.sendMessage(("ENCRYPT " + chatID + " $ ").toCharArray());
 	}
 	
 	public void genKeys() {
 		ckey = new ConferenceKey();
-		client.sendMessage("PUB_KEY " + chatID + " " + ckey.getZ() + " $ ");
+		client.sendMessage(("Z " + chatID + " " + ckey.getZ() + " $ ").toCharArray());
 	}
 
 	public void broadcastX(String l, String r) {
 		if (this.ckey == null) return;
 		BigInteger left = new BigInteger(l);
 		BigInteger right = new BigInteger(r);
-		client.sendMessage("X_KEY " + chatID + " " + ckey.generateX(left, right).toString() + " $ ");
+		client.sendMessage(("X_KEY " + chatID + " " + ckey.generateX(left, right).toString() + " $ ").toCharArray());
 	}
 
 	public void receiveXs(String indexStr, String leftZ, String[] xs) {
