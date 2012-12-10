@@ -42,6 +42,8 @@ public class GUI_ChatInterface extends JFrame {
 	private JTextArea chatterList;
 	private ArrayList<String> chatters;
 	private ConferenceKey ckey;
+	private final JPanel panel_2 = new JPanel();
+	private JButton btnEncrypt;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
@@ -118,6 +120,7 @@ public class GUI_ChatInterface extends JFrame {
 	}
 
 	public String getChatID() { return chatID; }
+	
 
 	public GUI_ChatInterface(Client c, String chatID) {
 		this.chatters = new ArrayList<String>();
@@ -125,7 +128,7 @@ public class GUI_ChatInterface extends JFrame {
 		this.chatID = chatID;
 		client = c;
 		Dimension dim = new Dimension(375, 285);
-		this.setSize(dim);
+		this.setSize(new Dimension(375, 312));
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		DisplayMode screen = gd.getDisplayMode();
 		this.setLocation((screen.getWidth()-dim.width)/2, (screen.getHeight()-dim.height)/2);
@@ -212,14 +215,23 @@ public class GUI_ChatInterface extends JFrame {
 			}
 		});
 		panel.add(userText, "1, 1, 2, 2, fill, fill");
-
-		btnSend = new JButton("SEND");
-		btnSend.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				sendUserText();
-			}
-		});
-		getContentPane().add(btnSend, "4, 4");
+				getContentPane().add(panel_2, "4, 4, fill, fill");
+						
+						btnEncrypt = new JButton("Encrypt");
+						btnEncrypt.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								startEncryption();
+							}
+						});
+						panel_2.add(btnEncrypt);
+				
+						btnSend = new JButton("SEND");
+						panel_2.add(btnSend);
+				btnSend.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						sendUserText();
+					}
+				});
 	}
 
 }
