@@ -177,10 +177,33 @@ public class Server {
 		log.trace("Removed a chatter. Num chatters: " + chatters.size());
 	}
 	
-	public void authUser(String userName, String password, Chatter user){
+	//method from http://www.javacodegeeks.com/2010/11/java-best-practices-char-to-byte-and.html
+	private byte[] toBytes(char[] buffer) {
+		 byte[] b = new byte[buffer.length << 1];
+		 for(int i = 0; i < buffer.length; i++) {
+			int bpos = i << 1;
+		  	b[bpos] = (byte) ((buffer[i]&0xFF00)>>8);
+		  	b[bpos + 1] = (byte) (buffer[i]&0x00FF);
+		 }
+		 return b;
+	}
+	
+	private void zeroArray(char[] c){
+		for(int i=0;i<c.length;i++){
+			c[i] = 0;
+		}
+	}
+	
+	private void zeroArray(byte[] b){
+		for(int i=0;i<b.length;i++){
+			b[i] = 0;
+		}
+	}
+	
+	public void authUser(String userName, char[] password, Chatter user){
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-512");
-			byte[] b = password.getBytes();
+			byte[] b = toBytes(password);
 			
 			String sH = authData.get(userName);
 			
@@ -204,27 +227,28 @@ public class Server {
 				user.addUnauthenticatedMessage("AUTH false$ ");
 			}
 			
+			zeroArray(password);
+			zeroArray(b);
+			
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	public void newAcc(String userName, String password, Chatter user){
+	public void newAcc(String userName, char[] password, Chatter user){
 		String sh = authData.get(userName);
-		
 		try {
 			if(sh == null){
 				MessageDigest md = MessageDigest.getInstance("SHA-512");
 				
 				byte[] salt = new byte[4];
 				random.nextBytes(salt);
-				while(saltsUsed.contains(salt)){
-					random.nextBytes(salt);
-				}
 				saltsUsed.add(salt);
 				
 				md.update(salt);
-				byte[] hashP = md.digest(password.getBytes());
+				
+				byte[] b = toBytes(password);
+				byte[] hashP = md.digest(b);
 				authData.put(userName,Arrays.toString(salt)+"#"+Arrays.toString(hashP));
 				writeAuthFile(userName,Arrays.toString(salt)+"#"+Arrays.toString(hashP));
 				
@@ -234,6 +258,9 @@ public class Server {
 				
 				sendAllNames(user);
 				sendToAll("USR_ADDED " + user.getName()+"$ ");
+				
+				zeroArray(password);
+				zeroArray(b);
 			}
 			else{
 				user.addUnauthenticatedMessage("NEW_ACC false$ ");

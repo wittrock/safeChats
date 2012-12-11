@@ -35,14 +35,52 @@ public class BufferPusher extends Thread {
 		}
 	}
 
-	private static int countChar(String str, char c) {
+	private int countChar(char[] str, char c) {
 		int count = 0;
-		for (int i = 0; i < str.length() ; i++) {
-			if (c == str.charAt(i)) {
+		for (int i = 0; i < str.length ; i++) {
+			if (c == str[i]) {
 				count++;
 			}
 		}
 		return count;
+	}
+	
+	private int indexOf(char[] str, char c,int start){
+		if(start>=str.length)
+			return -1;
+		for(int i=start;i<str.length;i++){
+			if(str[i]==c){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private char[] substring(char[] str,int begin,int end){
+		if(end==-1)
+			end = str.length;
+		if(begin>=end)
+			begin = end;
+		char[] ret = new char[end-begin];
+		for(int i=begin;i<end;i++){
+			ret[i-begin] = str[i];
+		}
+		return ret;
+	}
+	
+	private char[][] split(char[] str,char reg){
+		int count = countChar(str,reg)+1;
+		char[][] ret = new char[count][];
+		int begin = 0;
+		int end = indexOf(str,reg,0);
+		for(int i=0;i<count;i++){
+			char[] sub = substring(str,begin,end);
+			ret[i] = sub;
+			begin = end+1;
+			end = indexOf(str,reg,begin);
+		}
+		
+		return ret;
 	}
 
 
@@ -50,20 +88,21 @@ public class BufferPusher extends Thread {
 		while(true) {
 			try {
 				Message msg = getMessage();
-				String str = msg.getData();			
+				char[] str = msg.getData();			
 				// Parse the protocol stuff out
-				int protocolEnd = str.indexOf((int)'$');
+				int protocolEnd = indexOf(str,'$',0);
 				if (protocolEnd == -1) {
 					// Toss this out. 
 					continue;
 				}
 			
-				String protocol = str.substring(0, protocolEnd);
-				String userMessage = str.substring(protocolEnd + 1);
+				char[] protocol = substring(str,0, protocolEnd);
+				char[] userMessage = substring(str,protocolEnd + 1,str.length);
 			
-				String[] args = protocol.split(" ");
+				char[][] args = split(protocol,' ');
 				int numArgs = args.length;
-				String command = args[0];
+				String command = String.valueOf(args[0]);
+				
 			
 				log.trace(msg.getSender().getName()+": Got " + command +" message");
 
@@ -77,7 +116,7 @@ public class BufferPusher extends Thread {
 						//incorrectly formatted message. Log here?
 						continue;//toss.
 					}
-					String roomID = args[1];
+					String roomID = String.valueOf(args[1]);
 					Chatter sender = msg.getSender();
 					ChatRoom room = server.getRoomByID(roomID);
 					if (room == null) {
@@ -85,7 +124,7 @@ public class BufferPusher extends Thread {
 						continue;
 					}
 					if (room.containsChatter(sender)) {
-						String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + userMessage;
+						String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + String.valueOf(userMessage);
 						room.distributeMessage(annotatedMsg);
 					}
 
@@ -94,12 +133,12 @@ public class BufferPusher extends Thread {
 						continue; // invalid invite message. Log here?
 					}
 
-					String invitedChatter = args[1];
-					String roomId = args[2];
+					String invitedChatter = String.valueOf(args[1]);
+					String roomId = String.valueOf(args[1]);
 					Chatter c = server.getChatterByName(invitedChatter);
 					if (c == null) {
 						// send a failure message here. 
-						String inviteFailure = "INVITE_FAILED " + args[1] + " $ ";
+						String inviteFailure = "INVITE_FAILED " + String.valueOf(args[1]) + " $ ";
 						msg.getSender().addMessage(inviteFailure);
 						continue;
 					}
@@ -113,7 +152,7 @@ public class BufferPusher extends Thread {
 
 					room.inviteChatter(c);
 					// forward on the invite message.
-					c.addMessage("" + protocol + " $ ");
+					c.addMessage("" + String.valueOf(protocol) + " $ ");
 
 
 				} else if (command.equals("JOIN")) {
@@ -121,7 +160,7 @@ public class BufferPusher extends Thread {
 						continue;
 					}
 				
-					String roomId = args[1];
+					String roomId = String.valueOf(args[1]);
 					//				Chatter c = server.getChatterByName(invitedChatter);
 					Chatter c = msg.getSender();
 					ChatRoom room = server.getRoomByID(roomId);
@@ -133,15 +172,15 @@ public class BufferPusher extends Thread {
 				} else if(command.equals("AUTH")){
 					// We should do some error checking here.
 					if (numArgs !=3 || countChar(str, '$') > 1){continue;}
-					server.authUser(args[1],args[2],msg.getSender());
+					server.authUser(String.valueOf(args[1]),args[2],msg.getSender());
 
 				} else if (command.equals("NEW_ACC")){
 					if (numArgs !=3 || countChar(str, '$') > 1){continue;}
-					server.newAcc(args[1], args[2], msg.getSender());
+					server.newAcc(String.valueOf(args[1]), args[2], msg.getSender());
 
 				} else if (command.equals("CHTR_LEFT")) {
 					if (numArgs < 2) { continue; }
-					String roomId = args[1];
+					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
@@ -171,7 +210,7 @@ public class BufferPusher extends Thread {
 					c.stopAll();
 
 				} else if (command.equals("ENCRYPT")) {
-					String roomId = args[1];
+					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
@@ -179,20 +218,20 @@ public class BufferPusher extends Thread {
 					room.encryptRoom();
 
 				} else if (command.equals("Z")) {
-					String roomId = args[1];
+					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
 
-					room.addZ(c, args[2]);
+					room.addZ(c, String.valueOf(args[2]));
 					
 				} else if (command.equals("X_KEY")) {
-					String roomId = args[1];
+					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
 					
-					room.addX(c, args[2]);
+					room.addX(c, String.valueOf(args[2]));
 
 				} else {
 					//toss out the whole thing. we should add logging here.

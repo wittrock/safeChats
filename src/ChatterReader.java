@@ -40,7 +40,7 @@ public class ChatterReader extends ChatterHandler {
 					for(int i=0;i<list.size();i++){
 						rec[i]=list.get(i);
 					}
-					server.addMessage(new Message(String.valueOf(rec), this.chatter));
+					server.addMessage(new Message(rec, this.chatter));
 					list.clear();
 				}
 				else{list.add(c[0]);}

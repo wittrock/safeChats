@@ -147,10 +147,6 @@ public class Client {
 			typedWriter.write(str, 0, str.length);
 			typedWriter.newLine();
 			typedWriter.flush();
-			for(int i=0;i<str.length;i++){
-				str[i] = (char)0;
-				System.out.println(str[i]);
-			}
 		}catch (Exception e) {
 			System.out.println("Caught exception in sendMessage");
 			e.printStackTrace();

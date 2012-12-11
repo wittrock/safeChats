@@ -2,14 +2,14 @@ import java.io.*;
 import java.util.*;
 
 public class Message {
-	private String data;
+	private char[] data;
 	private Chatter sender;
 
-	public Message(String data, Chatter sender) {
+	public Message(char[] data, Chatter sender) {
 		this.data = data;
 		this.sender = sender;
 	}
 
-	public String getData() { return data; }
+	public char[] getData() { return data; }
 	public Chatter getSender() { return sender; }
 }

@@ -20,15 +20,33 @@ public class GUI_CreateAccount extends JFrame {
 	private JLabel lblError;
 	private Client client;
 	
+	private int indexOf(char[] str, char c,int start){
+		if(start>=str.length)
+			return -1;
+		for(int i=start;i<str.length;i++){
+			if(str[i]==c){
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	private boolean charEquals(char[] a, char[] b){
+		if(a.length != b.length)
+			return false;
+		for(int i=0;i<a.length;i++){
+			if(a[i] != b[i])
+				return false;
+		}
+		return true;
+	}
+	
 	private void NEW_ACC(){
-		StringBuffer pass = new StringBuffer();
-		StringBuffer passCheck = new StringBuffer();
 		char[] pword = passwordField.getPassword();
-		pass.append(pword);
-		passCheck.append(passwordField_1.getPassword());
-		if(pass.equals(passCheck)){
+		char[] pwordCheck = passwordField_1.getPassword();
+		if(charEquals(pword,pwordCheck)){
 			String name = textField.getText();
-			if(name.contains("$")||name.contains(" ")||pass.indexOf("$")!=-1||pass.indexOf(" ")!=-1){
+			if(name.contains("$")||name.contains(" ")||indexOf(pword,'$',0)!=-1||indexOf(pword,' ',0)!=-1){
 				lblError.setText("Invalid Character Used ($, )");
 			}else{
 				client.newAcc(name,pword);
