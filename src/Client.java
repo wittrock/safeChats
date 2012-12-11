@@ -144,12 +144,13 @@ public class Client {
 	
 	public synchronized void sendMessage(char[] str){
 		try{
-			String s = String.valueOf(str);
-			System.out.println(s);
 			typedWriter.write(str, 0, str.length);
 			typedWriter.newLine();
-			System.out.println("here");
 			typedWriter.flush();
+			for(int i=0;i<str.length;i++){
+				str[i] = (char)0;
+				System.out.println(str[i]);
+			}
 		}catch (Exception e) {
 			System.out.println("Caught exception in sendMessage");
 			e.printStackTrace();

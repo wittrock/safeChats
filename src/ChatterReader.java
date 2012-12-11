@@ -7,6 +7,7 @@
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -30,11 +31,19 @@ public class ChatterReader extends ChatterHandler {
 		try{
 			BufferedReader w = new BufferedReader(new InputStreamReader(sock.getInputStream()));
 
-			String c = null;
-			while ((c = w.readLine()) != null) { // While the stream is still open
-				log.trace(chatter.getName()+": Received a message from");
-				//				server.addMessage(new Message("" + this.chatter.getName() + ": " + str  +"\n", this.chatter)); // Send the message on up to the server.
-				server.addMessage(new Message(String.valueOf(c), this.chatter));
+			char[] c = new char[1];
+			LinkedList<Character> list = new LinkedList<Character>();
+			while ((w.read(c,0,1)) != -1) { // While the stream is still open
+				if(c[0]=='\n'){
+					log.trace(chatter.getName()+": Received a message from");
+					char[] rec = new char[list.size()];
+					for(int i=0;i<list.size();i++){
+						rec[i]=list.get(i);
+					}
+					server.addMessage(new Message(String.valueOf(rec), this.chatter));
+					list.clear();
+				}
+				else{list.add(c[0]);}
 			}
 		} catch (Exception e) {
 			log.trace("Chatter " + this.chatter.getName() + "  exited with exception.");			
