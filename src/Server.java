@@ -170,7 +170,7 @@ public class Server {
 			if (chatters.get(i).getName().equals(name)) {
 				Chatter c = chatters.remove(i);
 				c.stopAll();
-				sendToAll("USR_LEFT " + c.getName() + " $ ");
+				sendToAll("USR_LEFT " + c.getName() + "$ ");
 				break;
 			}
 		}

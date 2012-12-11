@@ -134,7 +134,7 @@ public class BufferPusher extends Thread {
 					}
 
 					String invitedChatter = String.valueOf(args[1]);
-					String roomId = String.valueOf(args[1]);
+					String roomId = String.valueOf(args[2]);
 					Chatter c = server.getChatterByName(invitedChatter);
 					if (c == null) {
 						// send a failure message here. 
@@ -237,7 +237,7 @@ public class BufferPusher extends Thread {
 					//toss out the whole thing. we should add logging here.
 					continue;
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				log.error ("Exception in runloop: " + e.getMessage());
 				continue;
 			}

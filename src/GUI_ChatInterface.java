@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.LinkedList;
 import javax.swing.JScrollPane;
 import java.math.*;
+import java.awt.SystemColor;
 
 public class GUI_ChatInterface extends JFrame {
 
@@ -37,13 +38,15 @@ public class GUI_ChatInterface extends JFrame {
 	private JButton btnSend;
 	private Client client;
 	private String chatID;
-	private JScrollPane scrollPane;
-	private JScrollPane scrollPane_1;
+	private JScrollPane outputPane;
+	private JScrollPane chatterPane;
 	private JTextArea chatterList;
 	private ArrayList<String> chatters;
 	private ConferenceKey ckey;
-	private final JPanel panel_2 = new JPanel();
+	private final JPanel sendPanel = new JPanel();
 	private JButton btnEncrypt;
+	private JPanel ownerPanel;
+	private JButton btnKick;
 	
 	public void addChatText(String txt){
 		chatText.append(txt);
@@ -128,7 +131,7 @@ public class GUI_ChatInterface extends JFrame {
 		this.chatID = chatID;
 		client = c;
 		Dimension dim = new Dimension(375, 285);
-		this.setSize(new Dimension(375, 312));
+		this.setSize(new Dimension(385, 312));
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		DisplayMode screen = gd.getDisplayMode();
 		this.setLocation((screen.getWidth()-dim.width)/2, (screen.getHeight()-dim.height)/2);
@@ -147,57 +150,59 @@ public class GUI_ChatInterface extends JFrame {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(39dlu;default):grow"),}));
 		
-		JPanel panel_1 = new JPanel();
-		getContentPane().add(panel_1, "4, 1, 1, 3, fill, fill");
-		panel_1.setLayout(new FormLayout(new ColumnSpec[] {
-				ColumnSpec.decode("default:grow"),},
+		JPanel chatterPanel = new JPanel();
+		getContentPane().add(chatterPanel, "4, 1, 1, 3, fill, fill");
+		Dimension d = chatterPanel.getSize();
+		chatterPanel.setLayout(new FormLayout(new ColumnSpec[] {
+				ColumnSpec.decode("75px:grow"),},
 			new RowSpec[] {
 				FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("20px:grow"),
-				FormFactory.LINE_GAP_ROWSPEC,
-				RowSpec.decode("23px"),
+				RowSpec.decode("98px:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(11dlu;default)"),}));
+				RowSpec.decode("10dlu:grow"),}));
 		
-		scrollPane_1 = new JScrollPane();
-		panel_1.add(scrollPane_1, "1, 2, 1, 9, fill, fill");
+		chatterPane = new JScrollPane();
+		chatterPanel.add(chatterPane, "1, 2, fill, fill");
 		
 		chatterList = new JTextArea();
 		chatterList.setEditable(false);
 		chatterList.setWrapStyleWord(true);
-		scrollPane_1.setViewportView(chatterList);
+		chatterPane.setViewportView(chatterList);
 		
 		inviteField = new JTextField(20);
-		panel_1.add(inviteField, "1, 12, left, top");
+		chatterPanel.add(inviteField, "1, 4, fill, top");
 		
-		inviteButton = new JButton("Invite...");
-		panel_1.add(inviteButton, "1, 14, center, top");
+		ownerPanel = new JPanel();
+		chatterPanel.add(ownerPanel, "1, 5, 1, 2, fill, fill");
+		ownerPanel.setLayout(new GridLayout(0, 1, 0, 0));
+		
+		inviteButton = new JButton("Invite");
+		inviteButton.setBackground(SystemColor.inactiveCaption);
+		ownerPanel.add(inviteButton);
+		
+		btnKick = new JButton("Kick");
+		btnKick.setBackground(SystemColor.inactiveCaption);
+		ownerPanel.add(btnKick);
 		inviteButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0){
 					inviteUser();
 				}
 			});
 		
-		scrollPane = new JScrollPane();
-		getContentPane().add(scrollPane, "2, 2, fill, fill");
+		outputPane = new JScrollPane();
+		getContentPane().add(outputPane, "2, 2, fill, fill");
 		
 		chatText = new JTextArea();
-		scrollPane.setViewportView(chatText);
+		outputPane.setViewportView(chatText);
 		chatText.setWrapStyleWord(true);
 		chatText.setEditable(false);
 		
-		JPanel panel = new JPanel();
-		panel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
-		getContentPane().add(panel, "1, 3, 2, 2, fill, fill");
-		panel.setLayout(new FormLayout(new ColumnSpec[] {
+		JPanel inputPanel = new JPanel();
+		inputPanel.setBorder(new LineBorder(new Color(0, 0, 0), 2));
+		getContentPane().add(inputPanel, "1, 3, 2, 2, fill, fill");
+		inputPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				FormFactory.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("default:grow"),},
 			new RowSpec[] {
@@ -214,19 +219,21 @@ public class GUI_ChatInterface extends JFrame {
 				}
 			}
 		});
-		panel.add(userText, "1, 1, 2, 2, fill, fill");
-				getContentPane().add(panel_2, "4, 4, fill, fill");
+		inputPanel.add(userText, "1, 1, 2, 2, fill, fill");
+				getContentPane().add(sendPanel, "4, 4, fill, fill");
 						
 						btnEncrypt = new JButton("Encrypt");
+						btnEncrypt.setBackground(SystemColor.inactiveCaption);
 						btnEncrypt.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent arg0) {
 								startEncryption();
 							}
 						});
-						panel_2.add(btnEncrypt);
+						sendPanel.setLayout(new GridLayout(0, 1, 0, 0));
+						sendPanel.add(btnEncrypt);
 				
 						btnSend = new JButton("SEND");
-						panel_2.add(btnSend);
+						sendPanel.add(btnSend);
 				btnSend.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent arg0) {
 						sendUserText();

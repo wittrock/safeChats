@@ -10,6 +10,9 @@ import com.jgoodies.forms.layout.RowSpec;
 import com.jgoodies.forms.factories.FormFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 
 
 public class GUI_Menu extends JFrame {
@@ -59,6 +62,8 @@ public class GUI_Menu extends JFrame {
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("default:grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("default:grow"),
+				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
 				FormFactory.RELATED_GAP_ROWSPEC,
 				FormFactory.DEFAULT_ROWSPEC,
@@ -86,8 +91,14 @@ public class GUI_Menu extends JFrame {
 						});
 						getContentPane().add(btnCreateAChat, "1, 1, fill, fill");
 						
+						JPanel panel = new JPanel();
+						getContentPane().add(panel, "1, 3, fill, fill");
+						
+						JCheckBox chckbxHideYourName = new JCheckBox("Hide My Name");
+						panel.add(chckbxHideYourName);
+						
 						JScrollPane scrollPane = new JScrollPane();
-						getContentPane().add(scrollPane, "1, 3, 1, 19, fill, fill");
+						getContentPane().add(scrollPane, "1, 5, 1, 19, fill, fill");
 						
 						userList = new JTextArea();
 						userList.setEditable(false);

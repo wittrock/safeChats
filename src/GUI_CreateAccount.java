@@ -41,6 +41,12 @@ public class GUI_CreateAccount extends JFrame {
 		return true;
 	}
 	
+	private void zeroArray(char[] c){
+		for(int i=0;i<c.length;i++){
+			c[i] = 0;
+		}
+	}
+	
 	private void NEW_ACC(){
 		char[] pword = passwordField.getPassword();
 		char[] pwordCheck = passwordField_1.getPassword();
@@ -57,6 +63,7 @@ public class GUI_CreateAccount extends JFrame {
 			passwordField.setText("");
 			passwordField_1.setText("");
 		}
+		zeroArray(pwordCheck);
 	}
 	
 	public void accFailed(){

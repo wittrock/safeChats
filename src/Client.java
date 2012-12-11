@@ -106,6 +106,7 @@ public class Client {
 		char[] ch = new char[sb.length()];
 		sb.getChars(0, sb.length(), ch, 0);
 		sendMessage(ch);
+		sb.delete(0, sb.length());
 	}
 	
 	public void newAcc(String userName, char[] password){
@@ -116,11 +117,12 @@ public class Client {
 		char[] ch = new char[sb.length()];
 		sb.getChars(0, sb.length(), ch, 0);
 		sendMessage(ch);
+		sb.delete(0, sb.length());
 	}
 	
 
 	public void leaveRoom(GUI_ChatInterface chat) {
-		sendMessage(("CHTR_LEFT " + chat.getChatID() + " $ ").toCharArray());
+		sendMessage(("CHTR_LEFT " + chat.getChatID() + "$ ").toCharArray());
 		cbp.leaveChat(chat.getChatID());
 	}
 	
