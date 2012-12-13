@@ -233,7 +233,15 @@ public class BufferPusher extends Thread {
 					
 					room.addX(c, String.valueOf(args[2]));
 
-				} else {
+				} else if (command.equals("HIDE")){
+					boolean bool = Boolean.valueOf(String.valueOf(args[1]));
+					Chatter c = msg.getSender();
+					if(bool)
+						server.sendToAll("USR_LEFT " + c.getName() + "$ ");
+					else
+						server.sendToAll("USR_ADDED " + c.getName() + "$ ");
+				}
+				else {
 					//toss out the whole thing. we should add logging here.
 					continue;
 				}

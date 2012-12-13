@@ -60,9 +60,15 @@ public class GUI_ChatInterface extends JFrame {
 	public void inviteUser() {
 		String invite = inviteField.getText();
 		if (invite.length() <= 0) return;
-		client.sendMessage(("INVITE " + invite + " " + chatID + " $ ").toCharArray());
+		client.sendMessage(("INVITE " + invite + " " + chatID + "$ ").toCharArray());
 		inviteField.setText("");
 	}
+	public void kickChatter(){
+		String kick = inviteField.getText();
+		if(kick.length()<= 0) return;
+		client.sendMessage(("KICK " + kick + " " + chatID + "$ ").toCharArray());
+	}
+	
 	public void addChatter(String name){
 		if(!chatters.contains(name) && name != null){
 			chatters.add(name);
@@ -183,6 +189,11 @@ public class GUI_ChatInterface extends JFrame {
 		ownerPanel.add(inviteButton);
 		
 		btnKick = new JButton("Kick");
+		btnKick.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				kickChatter();
+			}
+		});
 		btnKick.setBackground(SystemColor.inactiveCaption);
 		ownerPanel.add(btnKick);
 		inviteButton.addActionListener(new ActionListener() {

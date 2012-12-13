@@ -92,6 +92,14 @@ public class Client {
 			return;
 		}
 	}
+	
+	public void hideName(){
+		sendMessage(("HIDE true$ ").toCharArray());
+	}
+	
+	public void showName(){
+		sendMessage(("HIDE false$ ").toCharArray());
+	}
 
 	public void createChat() {
 		System.out.println("Client: creating message.");

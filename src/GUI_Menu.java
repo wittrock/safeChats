@@ -20,6 +20,7 @@ public class GUI_Menu extends JFrame {
 	Client client;
 	JTextArea userList;
 	LinkedList<String> users;
+	JCheckBox chckbxHideYourName;
 
 	public void newChat() {
 		client.createChat();
@@ -37,6 +38,14 @@ public class GUI_Menu extends JFrame {
 		}
 	}
 	
+	public void hideName(){
+		client.hideName();
+	}
+	
+	public void showName(){
+		client.showName();
+	}
+	
 	public void removeUser(String name){
 		users.remove(name);
 		updateUserDisplay();
@@ -52,7 +61,7 @@ public class GUI_Menu extends JFrame {
 	public GUI_Menu(Client client) {
 		this.client = client;
 		setResizable(true);
-		setSize(193,334);
+		setSize(193,336);
 		users = new LinkedList<String>();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		getContentPane().setLayout(new FormLayout(new ColumnSpec[] {
@@ -60,27 +69,9 @@ public class GUI_Menu extends JFrame {
 			new RowSpec[] {
 				RowSpec.decode("28px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("default:grow"),
+				RowSpec.decode("24px"),
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("default:grow"),
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,
-				FormFactory.RELATED_GAP_ROWSPEC,
-				FormFactory.DEFAULT_ROWSPEC,}));
+				RowSpec.decode("max(153dlu;default):grow"),}));
 				
 						JButton btnCreateAChat = new JButton("Create a Chat Room");
 						btnCreateAChat.addActionListener(new ActionListener() {
@@ -94,11 +85,19 @@ public class GUI_Menu extends JFrame {
 						JPanel panel = new JPanel();
 						getContentPane().add(panel, "1, 3, fill, fill");
 						
-						JCheckBox chckbxHideYourName = new JCheckBox("Hide My Name");
+						chckbxHideYourName = new JCheckBox("Hide My Name");
+						chckbxHideYourName.addActionListener(new ActionListener() {
+							public void actionPerformed(ActionEvent arg0) {
+								if(chckbxHideYourName.isSelected())
+									hideName();
+								else
+									showName();
+							}
+						});
 						panel.add(chckbxHideYourName);
 						
 						JScrollPane scrollPane = new JScrollPane();
-						getContentPane().add(scrollPane, "1, 5, 1, 19, fill, fill");
+						getContentPane().add(scrollPane, "1, 5, fill, fill");
 						
 						userList = new JTextArea();
 						userList.setEditable(false);
