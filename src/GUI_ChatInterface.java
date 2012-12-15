@@ -115,6 +115,12 @@ public class GUI_ChatInterface extends JFrame {
 		this.addChatText(plaintext + "\n");
 	}
 	
+	public void notOwner(){
+		inviteButton.setEnabled(false);
+		btnKick.setEnabled(false);
+		btnEncrypt.setEnabled(false);
+	}
+	
 	public void sendUserText(){
 
 		/* This call may actually not encrypt it if the crypto routines error out. */
@@ -142,6 +148,7 @@ public class GUI_ChatInterface extends JFrame {
 		String kick = inviteField.getText();
 		if(kick.length()<= 0) return;
 		client.sendMessage(("KICK " + kick + " " + chatID + "$ ").toCharArray());
+		inviteField.setText("");
 	}
 	
 	public void addChatter(String name){

@@ -144,7 +144,17 @@ public class ClientBufferPusher implements Runnable {
 				}
 			} else if (command.equals("JOINED")) {
 				newChat(args[1]);
-			} else if (command.equals("CHTR_ADDED")) {
+				GUI_ChatInterface gci = chats.get(Integer.valueOf(args[1]));
+				gci.notOwner();
+			} else if  (command.equals("KICK")){
+				if (args.length < 3) {
+					return;
+				}
+				GUI_ChatInterface gci = chats.get(Integer.valueOf(args[2]));
+				gci.dispose();
+				GUI_KickNotice gkn = new GUI_KickNotice(args[2]);
+				gkn.setVisible(true);
+			}else if (command.equals("CHTR_ADDED")) {
 				String chatter = args[1];
 				int roomId = Integer.valueOf(args[2]);
 				GUI_ChatInterface ci = chats.get(roomId);
@@ -224,6 +234,7 @@ public class ClientBufferPusher implements Runnable {
 	
 	public void killChats(){
 		for(GUI_ChatInterface chat: chats.values()){
+			client.sendMessage(("CHTR_LEFT " + chat.getChatID() + "$ ").toCharArray());
 			chat.dispose();
 		}
 	}
