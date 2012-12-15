@@ -52,6 +52,12 @@ public class GUI_ChatInterface extends JFrame {
 		chatText.append(txt);
 	}
 	
+	public void notOwner(){
+		inviteButton.setEnabled(false);
+		btnKick.setEnabled(false);
+		btnEncrypt.setEnabled(false);
+	}
+	
 	public void sendUserText(){
 		client.sendMessage(("MSG " + chatID + " $ " + userText.getText()).toCharArray());
 		userText.setText("");
@@ -67,6 +73,7 @@ public class GUI_ChatInterface extends JFrame {
 		String kick = inviteField.getText();
 		if(kick.length()<= 0) return;
 		client.sendMessage(("KICK " + kick + " " + chatID + "$ ").toCharArray());
+		inviteField.setText("");
 	}
 	
 	public void addChatter(String name){

@@ -131,12 +131,24 @@ public class Server {
 	
 	public void removeChatterFromAllRooms(Chatter c){
 		for(ChatRoom room:rooms.values()){
-			if(room.containsChatter(c))
+			if(room.containsChatter(c)){
 				room.removeChatter(c);
+				room.distributeMessage("CHTR_LEFT " + c.getName() + " " + room.getID() + " $ ");
+			}
 		}
 	}
 	
-	public void removeChatter(Chatter c){
+	// This should very much be done with a direct reference for the sake of security.
+	// For now, this will suffice.
+	public void removeChatter(Chatter c) {
+				chatters.remove(c);
+				c.stopAll();
+				removeChatterFromAllRooms(c);
+				sendToAll("USR_LEFT " + c.getName() + "$ ");
+		log.trace("Removed a chatter. Num chatters: " + chatters.size());
+	}
+	
+	public void removeChatterFromList(Chatter c){
 		chatters.remove(c);
 	}
 
@@ -163,19 +175,6 @@ public class Server {
 		return rooms.get(id);
 	}
 
-	// This should very much be done with a direct reference for the sake of security.
-	// For now, this will suffice.
-	public void removeChatter(String name) {
-		for (int i = 0; i < chatters.size(); i++) {
-			if (chatters.get(i).getName().equals(name)) {
-				Chatter c = chatters.remove(i);
-				c.stopAll();
-				sendToAll("USR_LEFT " + c.getName() + "$ ");
-				break;
-			}
-		}
-		log.trace("Removed a chatter. Num chatters: " + chatters.size());
-	}
 	
 	//method from http://www.javacodegeeks.com/2010/11/java-best-practices-char-to-byte-and.html
 	private byte[] toBytes(char[] buffer) {

@@ -145,7 +145,7 @@ public class BufferPusher extends Thread {
 				
 					// check that the sender is actually in the room. 
 					ChatRoom room = server.getRoomByID(roomId);
-					if (room == null || !room.containsChatter(msg.getSender()) || room.containsChatter(c)) {
+					if (room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || room.containsChatter(c)) {
 						// invalid room. will consider sending a different failure message here.
 						continue;
 					}
@@ -154,7 +154,22 @@ public class BufferPusher extends Thread {
 					// forward on the invite message.
 					c.addMessage("" + String.valueOf(protocol) + " $ ");
 
-
+				} else if (command.equals("KICK")){
+					if(numArgs < 3 || countChar(str, '$') > 1) {
+						continue; // invalid invite message. Log here?
+					}
+					
+					String kickedChatter = String.valueOf(args[1]);
+					String roomId = String.valueOf(args[2]);
+					ChatRoom room = server.getRoomByID(roomId);
+					Chatter c = server.getChatterByName(kickedChatter);
+					if (c == null || room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || !room.containsChatter(c))
+						continue;
+					
+					room.removeChatter(c);
+					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + roomId + " $ ");
+					c.addMessage("" + String.valueOf(protocol) + " $ ");
+					
 				} else if (command.equals("JOIN")) {
 					if (numArgs < 2) {
 						continue;
@@ -205,7 +220,7 @@ public class BufferPusher extends Thread {
 				} else if (command.equals("USR_LEFT")){
 					Chatter c = msg.getSender();
 					server.removeChatterFromAllRooms(c);
-					server.removeChatter(c);
+					server.removeChatterFromList(c);
 					chatters.remove(c);
 					c.stopAll();
 

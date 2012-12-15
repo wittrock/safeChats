@@ -49,7 +49,7 @@ public class ChatterReader extends ChatterHandler {
 			log.trace("Chatter " + this.chatter.getName() + "  exited with exception.");			
 		}
 
-		server.removeChatter(this.chatter.getName());
+		server.removeChatter(this.chatter);
 		log.trace("Chatter " + this.chatter.getName() + "  exited.");			
 
 	}
