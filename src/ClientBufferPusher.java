@@ -203,7 +203,7 @@ public class ClientBufferPusher implements Runnable {
 				int roomId = Integer.valueOf(args[1]);
 				GUI_ChatInterface ci = chats.get(roomId);
 				if (ci == null) { return; }
-				ci.addChatText("Server: The room has been destroyed because the owner left. No more messages will be accepted.\n");
+				ci.addChatText("Server: The room has been destroyed because the owner left. \nNo more messages will be accepted.\n");
 
 			} else {
 				// Toss this.

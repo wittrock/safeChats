@@ -50,7 +50,19 @@ public class GUI_CreateAccount extends JFrame {
 	private void NEW_ACC(){
 		char[] pword = passwordField.getPassword();
 		char[] pwordCheck = passwordField_1.getPassword();
+		
+
 		if(charEquals(pword,pwordCheck)){
+			boolean strong = PasswordClassifier.classify(new String(pwordCheck));
+			if (!strong) {
+				lblError.setText("Weak password.");
+				passwordField.setText("");
+				passwordField_1.setText("");
+				zeroArray(pwordCheck);
+				return;
+			}
+
+
 			String name = textField.getText();
 			if(name.contains("$")||name.contains(" ")||indexOf(pword,'$',0)!=-1||indexOf(pword,' ',0)!=-1){
 				lblError.setText("Invalid Character Used ($, )");
@@ -63,6 +75,8 @@ public class GUI_CreateAccount extends JFrame {
 			passwordField.setText("");
 			passwordField_1.setText("");
 		}
+
+
 		zeroArray(pwordCheck);
 	}
 	
