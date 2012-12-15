@@ -45,6 +45,8 @@ public class ConferenceKey {
 
 	public BigInteger getPrivateKey() { return this.privateKey; }
 	public BigInteger getZ() { return this.z; }
+	public BigInteger getSharedKey() { return this.sKey; }
+	
 
 	public void generatePrivateKey() {
 		int bitLength = modulus.bitLength();

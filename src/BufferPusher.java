@@ -91,14 +91,20 @@ public class BufferPusher extends Thread {
 				char[] str = msg.getData();			
 				// Parse the protocol stuff out
 				int protocolEnd = indexOf(str,'$',0);
+				int msgStart = protocolEnd +1;
 				if (protocolEnd == -1) {
 					// Toss this out. 
 					continue;
 				}
 			
-				char[] protocol = substring(str,0, protocolEnd);
-				char[] userMessage = substring(str,protocolEnd + 1,str.length);
-			
+				if (str[protocolEnd - 1] == ' ') {
+					protocolEnd--;
+				}
+
+				char[] protocol = substring(str, 0, protocolEnd);
+				char[] userMessage = substring(str, msgStart, str.length);
+
+				
 				char[][] args = split(protocol,' ');
 				int numArgs = args.length;
 				String command = String.valueOf(args[0]);
@@ -119,14 +125,33 @@ public class BufferPusher extends Thread {
 					String roomID = String.valueOf(args[1]);
 					Chatter sender = msg.getSender();
 					ChatRoom room = server.getRoomByID(roomID);
-					if (room == null) {
+					if (room == null || !room.containsChatter(sender)) {
 						//invalid room. Log here?
 						continue;
 					}
-					if (room.containsChatter(sender)) {
+
+					// We know now that the sender is authorized to send to this room.
+					System.out.print("Args: ");
+					for (int i = 0; i < args.length ; i ++ ) {
+						System.out.print("" + i + ": "  + new String(args[i]) + " ");
+					}
+					System.out.println();
+					if (numArgs == 2) {
+						// non-encrypted message
+						System.out.println("Got non-encrypted message");
 						String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + String.valueOf(userMessage);
+						System.out.println("User message: " + new String(userMessage));
+						room.distributeMessage(annotatedMsg);
+					} else {
+						System.out.println("Got encrypted message");
+						String annotatedMsg = "MSG " + 
+							roomID + " " + 
+							String.valueOf(args[2]) + " " + // this will be the iv. 
+							" $ " + String.valueOf(userMessage);
+
 						room.distributeMessage(annotatedMsg);
 					}
+
 
 				} else if (command.equals("INVITE")) {
 					if(numArgs < 3 || countChar(str, '$') > 1) {
@@ -262,6 +287,7 @@ public class BufferPusher extends Thread {
 				}
 			} catch (Exception e) {
 				log.error ("Exception in runloop: " + e.getMessage());
+				e.printStackTrace();
 				continue;
 			}
 		} 
