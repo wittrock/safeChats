@@ -210,6 +210,14 @@ public class Server {
 				user.addUnauthenticatedMessage("AUTH false$ ");
 				return;
 			}
+			
+			for(Chatter c: chatters){
+				if(c.getName().equals(userName) && c.isAuthenticated()){
+					user.addUnauthenticatedMessage("AUTH false$ ");
+					return;
+				}
+			}
+			
 			String[] div = sH.split("#");
 			byte[] salt = util_StringToByteArr(div[0]);
 			byte[] hash = util_StringToByteArr(div[1]);
