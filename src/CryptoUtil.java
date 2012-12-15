@@ -63,7 +63,8 @@ public class CryptoUtil {
 		try {
 			Cipher dec = Cipher.getInstance("AES/CBC/PKCS5PADDING");
 			SecretKey k = new SecretKeySpec(key, "AES");
-			dec.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(iv));					plainBytes = dec.doFinal(message);
+			dec.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(iv));
+			plainBytes = dec.doFinal(message);
 		} catch (NoSuchAlgorithmException e) {
 			System.out.println("No Such algorithm exception. Returning.");
 			e.printStackTrace();
@@ -96,13 +97,30 @@ public class CryptoUtil {
 
 	/* HMAC SHA 256 by default */
 	public static byte[] getMAC(byte[] key, byte[] message) {
-		return null;
+		byte[] result = new byte[0];
+		try {
+			SecretKey k = new SecretKeySpec(key, "HmacSHA256");
+			Mac mac = Mac.getInstance("HmacSHA256");
+			mac.init(k);
+			result = mac.doFinal(message);
+		} catch (NoSuchAlgorithmException e) {
+			System.out.println("No Such algorithm exception. Returning.");
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			System.out.println("Invalid key while MACing");
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	
-	public static byte[] verifyMac(byte[] key, byte[] message) {
-		return null;
+	public static boolean verifyMac(byte[] key, byte[] mac, byte[] message) {
+		if (Arrays.equals(getMAC(key, message), mac)) {
+			//			System.out.println("MAC SUCCESS");
+			return true;
+		} else {
+			return false;
+		}
 	}
-
-
 	
 }
