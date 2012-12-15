@@ -48,6 +48,7 @@ public class GUI_ChatInterface extends JFrame {
 	private JPanel ownerPanel;
 	private JButton btnKick;
 	
+	/* Adds given text to the chat log for this chat. Displays it onscreen.*/
 	public void addChatText(String txt){
 		chatText.append(txt);
 	}
@@ -58,6 +59,8 @@ public class GUI_ChatInterface extends JFrame {
 			return null;
 		}
 
+		/* Take the SHA-512 of the shared key, use half for a
+		 * MAC key and half for an encryption key */
 		byte[] hash = CryptoUtil.getSHA512(this.ckey.getSharedKey());
 		if (hash == null || hash.length < 2) return null;		
 		
@@ -70,12 +73,11 @@ public class GUI_ChatInterface extends JFrame {
 
 		if (msg == null) return null;
 		
-		/* XXX: Remember to add MAC later! */
-
+		
 		int ivLength = msg.getIVLength();
 		byte[] ciphertextBytes = msg.getIVAndMessage();
 
-		//compute the mac address
+		//compute the mac of this message/IV concatenation
 		byte[] mac = CryptoUtil.getMAC(macKey, ciphertextBytes);
 		
 		//add it to this message
@@ -85,6 +87,9 @@ public class GUI_ChatInterface extends JFrame {
 		//get the resultant message. MAC is prepended to the iv and ciphertext
 		byte[] macAndCiphertext = msg.getIVMessageAndMac();
 		
+		/* We encode the ciphertext in base 64 for transmission. 
+		 * This allows us to rule out the existence of things like newlines in the ciphertext. 
+		 */
 		String ciphertext = new String(Base64.encodeBase64(macAndCiphertext));		
 		return "MSG " + chatID + " " 
 			+ Integer.toString(ivLength) + " " 
@@ -93,6 +98,7 @@ public class GUI_ChatInterface extends JFrame {
 
 	}
 
+	/* Decrypts an encrypted, MAC-ed message and displays the result in the chat box for this chat. */
 	public void decryptMessageAndDisplay(String ivLengthStr, String macLengthStr, String senderName, String userMessage){ 
 		/* Populate our decryption keys using the shared key */
 		if (this.ckey == null || this.ckey.getSharedKey() == null) {
@@ -117,10 +123,11 @@ public class GUI_ChatInterface extends JFrame {
 		 */
 		int ivLength = Integer.valueOf(ivLengthStr);
 		int macLength = Integer.valueOf(macLengthStr);
-		
+
+		/* The ciphertext was base 64 encoded for transmission. Now decode it */
 		byte[] macIVAndMsg = Base64.decodeBase64(userMessage);
 		
-
+		/* Make sure the length arguments are valid */
 		if (ivLength >= macIVAndMsg.length 
 		    || macLength >= macIVAndMsg.length 
 		    || macLength + ivLength >= macIVAndMsg.length) {
@@ -129,7 +136,10 @@ public class GUI_ChatInterface extends JFrame {
 			System.out.println("IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY.");
 			return;
 		} 
-
+		
+		/* Remove the mac from the byte array, and then verify
+		 * that the rest of the message corresponds to that
+		 * MAC */
 		byte[] mac = Arrays.copyOfRange(macIVAndMsg, 0, macLength);
 		byte[] cipherText = Arrays.copyOfRange(macIVAndMsg, macLength, macIVAndMsg.length);
 		
@@ -138,12 +148,14 @@ public class GUI_ChatInterface extends JFrame {
 			this.addChatText("INVALID MAC FOR MESSAGE. IT IS POSSIBLE SOMEONE IS DOING SOMETHING NASTY\n");
 			return;
 		}
-
+		
+		/* Now decrypt the message */
 		byte[] iv = Arrays.copyOfRange(macIVAndMsg, macLength, ivLength + macLength);
 		byte[] msg = Arrays.copyOfRange(macIVAndMsg, ivLength + macLength, macIVAndMsg.length);
 		
 		String plaintext = CryptoUtil.decrypt(encryptionKey, iv, msg);
-		System.out.println("DECRYPTED: " + plaintext);
+
+		/* And display it */
 		this.addChatText("" + senderName + ": " + plaintext + "\n");
 	}
 	
@@ -155,10 +167,12 @@ public class GUI_ChatInterface extends JFrame {
 	
 	public void sendUserText(){
 
-		/* This call may actually not encrypt it if the crypto routines error out. */
+		/* This call may actually not encrypt it if the crypto
+		 * routines error out or we don't have a shared
+		 * key. */
 		String userString = encryptUserText(); 
 		if (userString == null) { 
-			// there was an error. don't send this message. 
+			// Send the message normally. 
 			client.sendMessage(("MSG " + chatID + " $ " + userText.getText()).toCharArray());
 			userText.setText("");
 			return;

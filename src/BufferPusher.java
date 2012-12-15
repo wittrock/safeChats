@@ -244,15 +244,8 @@ public class BufferPusher extends Thread {
 
 					room.removeChatter(c);
 
-					if (room.size() == 0) {
-						// commenting this out for
-						// later when we may want to
-						// give more priveleges to
-						// owners
-
-						// room.distributeMessage("RM_DESTROYED " + roomId + " $ ");
-
-						// actually remove the room. 
+					if (room.size() == 0 || c.equals(room.getOwner())) {
+						room.distributeMessage("RM_DESTROYED " + roomId + " $ ");									       // actually remove the room. 
 						server.removeRoom(room.getID());
 						log.trace("Room destroyed: " + room.getID());
 					} else {
