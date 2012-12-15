@@ -136,20 +136,37 @@ public class BufferPusher extends Thread {
 						System.out.print("" + i + ": "  + new String(args[i]) + " ");
 					}
 					System.out.println();
+
 					if (numArgs == 2) {
 						// non-encrypted message
 						System.out.println("Got non-encrypted message");
 						String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + String.valueOf(userMessage);
+
 						System.out.println("User message: " + new String(userMessage));
 						room.distributeMessage(annotatedMsg);
-					} else {
+
+					} else if (numArgs == 4) {
+						/* The format for an
+						 * encrypted message is as follows: 
+						 * args[0] is the MSG command as usual.
+						 * args[1] is the randomly generated roomID, as with unencrypted messages
+						 * args[2] is the iv length, in bytes
+						 * args[3] is the MAC length, in bytes
+						 * args[4] will be the sender's id name, since we can't prepend it to the 
+						 *         message anymore. 
+						 */
 						System.out.println("Got encrypted message");
 						String annotatedMsg = "MSG " + 
 							roomID + " " + 
-							String.valueOf(args[2]) + " " + // this will be the iv. 
+							String.valueOf(args[2]) + " " +
+							String.valueOf(args[3]) + " " + 
+							sender.getName() + // this will be the iv. 
 							" $ " + String.valueOf(userMessage);
-
+						System.out.println("Forwarding annotated Message: " + annotatedMsg);
 						room.distributeMessage(annotatedMsg);
+
+					} else {
+						continue;
 					}
 
 

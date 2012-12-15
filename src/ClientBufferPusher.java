@@ -50,7 +50,7 @@ public class ClientBufferPusher implements Runnable {
 			client.authed();
 			menu = new GUI_Menu(client);
 			menu.setVisible(true);
-		}else{
+		} else{
 			client.authFailed();
 		}
 	}
@@ -121,7 +121,14 @@ public class ClientBufferPusher implements Runnable {
 				}
 				
 				if (args.length > 2) { 
-					ci.decryptMessageAndDisplay(args[2], userMessage);
+					/* As stated in BufferPusher.java, the format is:
+					 * args[0] is the MSG command
+					 * args[1] is the roomID
+					 * args[2] is the IV length in bytes
+					 * args[3] is the MAC length in bytes
+					 * args[4] is the sender's name.
+					 */
+					ci.decryptMessageAndDisplay(args[2], args[3], args[4], userMessage);
 					return;
 				}
 
