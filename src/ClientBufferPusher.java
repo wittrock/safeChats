@@ -130,7 +130,6 @@ public class ClientBufferPusher implements Runnable {
 				if (args.length < 3) {
 					return;
 				}
-				String chatId = args[2];
 				// maybe throw up an accept dialog here?
 				if (!chats.containsKey(Integer.valueOf(args[2]))) {
 					joinChat(args[2]);

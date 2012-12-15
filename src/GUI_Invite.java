@@ -1,10 +1,23 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JButton;
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 
 public class GUI_Invite extends JFrame {
+	
+	public void acceptInvite(){
+		
+	}
+	
+	public void rejectInvite(){
+		
+	}
+	
 	public GUI_Invite(String userName) {
+		setSize(new Dimension(220, 155));
 		setResizable(false);
 		getContentPane().setLayout(null);
 		
@@ -17,10 +30,18 @@ public class GUI_Invite extends JFrame {
 		getContentPane().add(label);
 		
 		JButton btnAccept = new JButton("Accept");
+		btnAccept.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
 		btnAccept.setBounds(10, 66, 89, 23);
 		getContentPane().add(btnAccept);
 		
 		JButton btnReject = new JButton("Reject");
+		btnReject.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		btnReject.setBounds(109, 66, 89, 23);
 		getContentPane().add(btnReject);
 	}
