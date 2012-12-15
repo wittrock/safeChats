@@ -119,7 +119,14 @@ public class ClientBufferPusher implements Runnable {
 					System.out.println("Could not find the room id: " + protocol);
 					return;
 				}
+				
+				if (args.length > 2) { 
+					ci.decryptMessageAndDisplay(args[2], userMessage);
+					return;
+				}
+
 				ci.addChatText(userMessage);
+
 			} else if (command.equals("AUTH")){
 				String bool = args[1];
 				AUTH(bool);

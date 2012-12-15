@@ -25,11 +25,11 @@ import java.util.LinkedList;
 import javax.swing.JScrollPane;
 import java.math.*;
 import java.awt.SystemColor;
+import org.apache.commons.codec.binary.Base64;
 
 public class GUI_ChatInterface extends JFrame {
 
 	private static final long serialVersionUID = 3115636304040322146L;
-	
 	
 	private JTextArea chatText;
 	private JTextArea userText;
@@ -51,10 +51,85 @@ public class GUI_ChatInterface extends JFrame {
 	public void addChatText(String txt){
 		chatText.append(txt);
 	}
+
+	private String encryptUserText() {
+		String userString = userText.getText();
+		if (this.ckey == null || this.ckey.getSharedKey() == null) {
+			return null;
+		}
+
+		byte[] hash = CryptoUtil.getSHA512(this.ckey.getSharedKey());
+		if (hash == null || hash.length < 2) return null;		
+		
+		int midHash = hash.length / 2;
+		byte[] encryptionKey = Arrays.copyOfRange(hash, 0, midHash);
+		byte[] macKey = Arrays.copyOfRange(hash, midHash, hash.length);
+		
+		/* We're using encrypt then MAC here, as specified in the course notes */
+		EncryptedMessage msg = CryptoUtil.encrypt(encryptionKey, userString.getBytes());
+
+		if (msg == null) return null;
+		
+		/* XXX: Remember to add MAC later! */
+
+		int ivLength = msg.getIVLength();
+		byte[] ciphertextBytes = msg.getIVAndMessage();
+		String ciphertext = new String(Base64.encodeBase64(ciphertextBytes));
+		
+		return "MSG " + chatID + " " + Integer.toString(ivLength) + " $ " + ciphertext;
+
+	}
+
+	public void decryptMessageAndDisplay(String ivLengthStr, String userMessage){ 
+		/* Populate our decryption keys using the shared key */
+		if (this.ckey == null || this.ckey.getSharedKey() == null) {
+			return;
+		}
+
+		byte[] hash = CryptoUtil.getSHA512(this.ckey.getSharedKey());
+		if (hash == null || hash.length < 2) return;		
+		
+		int midHash = hash.length / 2;
+		byte[] encryptionKey = Arrays.copyOfRange(hash, 0, midHash);
+		byte[] macKey = Arrays.copyOfRange(hash, midHash, hash.length);
+
+		/* 
+		 * Now start doing the actual decryption.  First we
+		 * have to extract the iv from the message. The IV is
+		 * the first part of the byte array, and is ivLength
+		 * bytes long. The IV length was passed as a parameter
+		 * in the message arguments (part of the protocol
+		 * message in the MSG command, and is the 3rd element
+		 * in the array (index 2).
+		 */
+		int ivLength = Integer.valueOf(ivLengthStr);
+		byte[] ivAndMsg = Base64.decodeBase64(userMessage);
+
+		if (ivLength > ivAndMsg.length) return; //error. 
+
+		byte[] iv = Arrays.copyOfRange(ivAndMsg, 0, ivLength);
+		byte[] msg = Arrays.copyOfRange(ivAndMsg, ivLength, ivAndMsg.length);
+		
+		String plaintext = CryptoUtil.decrypt(encryptionKey, iv, msg);
+		System.out.println("DECRYPTED: " + plaintext);
+		this.addChatText(plaintext + "\n");
+	}
 	
 	public void sendUserText(){
-		client.sendMessage(("MSG " + chatID + " $ " + userText.getText()).toCharArray());
+
+		/* This call may actually not encrypt it if the crypto routines error out. */
+		String userString = encryptUserText(); 
+		if (userString == null) { 
+			// there was an error. don't send this message. 
+			client.sendMessage(("MSG " + chatID + " $ " + userText.getText()).toCharArray());
+			userText.setText("");
+			return;
+		}
+
+		client.sendMessage(userString.toCharArray());
+
 		userText.setText("");
+
 	}
 	
 	public void inviteUser() {
