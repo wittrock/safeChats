@@ -1,3 +1,8 @@
+/* John Wittrock, Greg Herpel, 2012
+ * This class implements the Burmester-Desmedt conference keying protocol. 
+ * An explanation can be found at http://www.scribd.com/doc/2979523/7/Conference-keying
+ */
+
 import java.io.*;
 import java.util.*;
 import java.math.BigInteger;
@@ -62,7 +67,6 @@ public class ConferenceKey {
 		}
 		
 		z = generator.modPow(this.privateKey, this.modulus);
-		
 	}
 
 	public BigInteger generateX(BigInteger left, BigInteger right) {
@@ -100,7 +104,7 @@ public class ConferenceKey {
 		return sharedKey;
 	}
 	
-	
+	/* Main method for unit testing */
 	public static void main(String[] args) {
 		System.out.println(-3 % 10);
 		

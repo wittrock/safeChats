@@ -1,3 +1,7 @@
+/*
+ * This is the 
+ */
+
 import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -33,11 +37,16 @@ public class ChatRoom {
 		PropertyConfigurator.configure("log4j.properties");
 	}
 	
+	/* Adds a chatter to this room, but only if they've been invited first. */
 	public boolean addChatter(Chatter c) {
-		if (!invited.contains(c)) { return false; }
+		if (!invited.contains(c)) { 
+			log.info("Chatter tried to join room that they weren't invited to: " + c.getName());
+			return false; 
+		}
 
 		log.trace("Found invited chatter: " + c.getName());
 
+		// tell all the other chatters in the room that this user was added.
 		this.distributeMessage("CHTR_ADDED " + c.getName() + " " + Integer.toString(this.id) + " $ ");
 
 		chatters.add(c);
@@ -54,12 +63,14 @@ public class ChatRoom {
 		return true;
 	}
 
+	// Tell all the users in the room to begin the conference keying broadcast rounds. 
 	public void encryptRoom() {
 		distributeMessage("BEGIN_ENC " + this.id + " $ ");
 	}
 	
+
+	/* This method is called when we receive a Z from a chatter.  */
 	public void addZ(Chatter c, String z) {
-		/* Have to remember to turn adding users off */
 		/* Dynamic re-encryption will be a problem. */
 
 		if (numZs == 0 || zs == null) {
@@ -87,6 +98,7 @@ public class ChatRoom {
 		}
 	}
 
+	/* This method is called when we receive an X from a chatter.  */
 	public void addX(Chatter c, String x) {
 		if (numXs == 0 || xs == null) {
 			xs = new String[chatters.size()];
@@ -150,6 +162,7 @@ public class ChatRoom {
 		return this.id;
 	}
 
+	// Sends a given string to all users in this room. 
 	public void distributeMessage(String message) {
 		log.trace("Room"+id+": Pushing a message to chatters");
 		for(Chatter c : this.chatters) {

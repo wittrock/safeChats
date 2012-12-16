@@ -1,7 +1,15 @@
-/* John Wittrock, Greg Herpel 2012 This is going to become more of a
+/* John Wittrock, Greg Herpel 2012 
+ * This is going to become more of a
  * processing class than anything else.  This, or a closely-related
  * class will actually have to parse protocol messages and perform the
- * necessary operations. Still more to do here.
+ * necessary operations. This class handles all messages coming into the server and demultiplexes 
+ * them to the right chat room, and also processes protocol messages. 
+ * 
+ * Protocol messages are arranged as follows:
+ * The first string will be a command. There will then be a series of 
+ * arguments, delimited by spaces, and then a '$' character, and then a possible user-message, 
+ * or an encrypted message. Note that the only command which takes a user message (in plaintext 
+ * or ciphertext) is the MSG command. 
  */ 
 
 import java.util.*;
@@ -25,6 +33,10 @@ public class BufferPusher extends Thread {
 		PropertyConfigurator.configure("log4j.properties");
 	}
 
+
+	/* Returns a new message from the blocking queue. 
+	 * This function blocks until a message is on the queue.
+	 */
 	private Message getMessage() {
 		try {
 		    	return writeBuffer.take();
@@ -35,6 +47,8 @@ public class BufferPusher extends Thread {
 		}
 	}
 
+	/* Begin String-like char-array functions. 
+	 * Used so we can zero out memory used for passwords. */
 	private int countChar(char[] str, char c) {
 		int count = 0;
 		for (int i = 0; i < str.length ; i++) {
@@ -83,12 +97,25 @@ public class BufferPusher extends Thread {
 		return ret;
 	}
 
+	/* End of char-array parsing functions. */
+
+	/* 
+	 * Protocol messages are arranged as follows:
+	 * The first string will be a command. There will then be a series of 
+	 * arguments, delimited by spaces, and then a '$' character, and then a possible user-message, 
+	 * or an encrypted message. Note that the only command which takes a user message (in plaintext 
+	 * or ciphertext) is the MSG command. 
+	 */
 
 	public void run(){
 		while(true) {
 			try {
+				// try and get a new message from the blocking queue. 
 				Message msg = getMessage();
-				char[] str = msg.getData();			
+				
+				/* Get the data out of the message */
+				char[] str = msg.getData();	
+		
 				// Parse the protocol stuff out
 				int protocolEnd = indexOf(str,'$',0);
 				int msgStart = protocolEnd +1;
@@ -97,6 +124,7 @@ public class BufferPusher extends Thread {
 					continue;
 				}
 			
+				/* Make sure we parsed this correctly and we don't have an extra space at the end */
 				if (str[protocolEnd - 1] == ' ') {
 					protocolEnd--;
 				}
@@ -104,24 +132,40 @@ public class BufferPusher extends Thread {
 				char[] protocol = substring(str, 0, protocolEnd);
 				char[] userMessage = substring(str, msgStart, str.length);
 
-				
 				char[][] args = split(protocol,' ');
 				int numArgs = args.length;
 				String command = String.valueOf(args[0]);
-				
 			
 				log.trace(msg.getSender().getName()+": Got " + command +" message");
 
+
+				/* Create chat room */
 				if (command.equals("CREATE")) {
 					log.trace("Sending create command to " + msg.getSender().getName());
 					server.createRoom(msg.getSender());
 					continue;
 
+
 				} else if (command.equals("MSG")) {
+
+					/* Message command. This is the one that's going to take the most processing. */
+					/* This is organized as follows:
+					 * If the message isn't encrypted,
+					 * args[1] = the roomID to be sent to
+					 *
+					 * If the message is encrypted, the format is:
+					 * args[1] = the room id
+					 * args[2] = the mac length, in bytes
+					 * args[3] = the iv length, in bytes
+					 * The user message is then a concatenation of MAC, IV, and encrypted message, 
+					 * in base 64, which then has to be converted back to bytes and stripped apart. 
+					 */
+
 					if (numArgs < 2) {
 						//incorrectly formatted message. Log here?
 						continue;//toss.
 					}
+
 					String roomID = String.valueOf(args[1]);
 					Chatter sender = msg.getSender();
 					ChatRoom room = server.getRoomByID(roomID);
@@ -131,11 +175,6 @@ public class BufferPusher extends Thread {
 					}
 
 					// We know now that the sender is authorized to send to this room.
-					System.out.print("Args: ");
-					for (int i = 0; i < args.length ; i ++ ) {
-						System.out.print("" + i + ": "  + new String(args[i]) + " ");
-					}
-					System.out.println();
 
 					if (numArgs == 2) {
 						// non-encrypted message
@@ -147,7 +186,7 @@ public class BufferPusher extends Thread {
 
 					} else if (numArgs == 4) {
 						/* The format for an
-						 * encrypted message is as follows: 
+						 * encrypted message back to a client is as follows: 
 						 * args[0] is the MSG command as usual.
 						 * args[1] is the randomly generated roomID, as with unencrypted messages
 						 * args[2] is the iv length, in bytes
@@ -171,6 +210,12 @@ public class BufferPusher extends Thread {
 
 
 				} else if (command.equals("INVITE")) {
+					/* Invite command from a client. 
+					 * Format:
+					 * args[1] = the invited chatter, by name.
+					 * args[2] = the roomId
+					 */
+					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
 						continue; // invalid invite message. Log here?
 					}
@@ -213,6 +258,11 @@ public class BufferPusher extends Thread {
 					c.addMessage("" + String.valueOf(protocol) + " $ ");
 					
 				} else if (command.equals("JOIN")) {
+					/* Join command from a client to the server. Format:
+					 * args[1] = the roomID.
+					 * This also checks that the user has actually been invited and is authorized to join. 
+					 */
+
 					if (numArgs < 3) {
 						continue;
 					}
@@ -240,6 +290,9 @@ public class BufferPusher extends Thread {
 					server.newAcc(String.valueOf(args[1]), args[2], msg.getSender());
 
 				} else if (command.equals("CHTR_LEFT")) {
+					/* What is sent by the client when they exit a chat room. */
+					/* The only argument is the roomID. */
+					
 					if (numArgs < 2) { continue; }
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
@@ -257,6 +310,8 @@ public class BufferPusher extends Thread {
 					}
 
 				} else if (command.equals("USR_LEFT")){
+					/* When a user signs off, they send this message */
+					/* No arguments since we know the chatter from their specific socket connection */
 					Chatter c = msg.getSender();
 					server.removeChatterFromAllRooms(c);
 					server.removeChatterFromList(c);
@@ -264,6 +319,8 @@ public class BufferPusher extends Thread {
 					c.stopAll();
 
 				} else if (command.equals("ENCRYPT")) {
+					/* When a user wants to encrypt their chat room */
+					/* Do authorization here. */
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
@@ -272,6 +329,8 @@ public class BufferPusher extends Thread {
 					room.encryptRoom();
 
 				} else if (command.equals("Z")) {
+					/* Command sent after querying for keys from chatters in a room */
+					/* See ConferenceKey.java for more information */
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
@@ -280,6 +339,7 @@ public class BufferPusher extends Thread {
 					room.addZ(c, String.valueOf(args[2]));
 					
 				} else if (command.equals("X_KEY")) {
+					/* The second broadcast round of Conference keying */
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
@@ -288,6 +348,7 @@ public class BufferPusher extends Thread {
 					room.addX(c, String.valueOf(args[2]));
 
 				} else if (command.equals("HIDE")){
+					/* When a user wants to hide themselves from user lists */
 					boolean bool = Boolean.valueOf(String.valueOf(args[1]));
 					Chatter c = msg.getSender();
 					if(bool)

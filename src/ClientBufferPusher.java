@@ -4,7 +4,12 @@ import java.util.Arrays;
 
 /*
  * Greg Herpel, John Wittrock, 2012
- * This class is a buffer for handling messages from the server
+ * This class is a processing and control class for all messages to the client. 
+ * It reads messages sent to the server by clients and takes appropriate action. 
+ * The name of this class is taken from the initial version of this program, because 
+ * the server side implementation of this pushed
+ * messages to client buffers. Now, it does something similar, but takes appropriate action
+ * based on the content of the command section of messages. 
  */
 
 public class ClientBufferPusher implements Runnable {
@@ -87,6 +92,13 @@ public class ClientBufferPusher implements Runnable {
 	private void CHTR_LEFT(String chat, String user){
 		
 	}
+
+	/* Protocol messages are arranged as follows:
+	 * The first string will be a command. There will then be a series of 
+	 * arguments, delimited by spaces, and then a '$' character, and then a possible user-message, 
+	 * or an encrypted message. Note that the only command which takes a user message (in plaintext 
+	 * or ciphertext) is the MSG command. 
+	 */
 
 	private void handleMessage(String message){
 		try{
