@@ -102,6 +102,7 @@ public class GUI_ChatInterface extends JFrame {
 	public void decryptMessageAndDisplay(String ivLengthStr, String macLengthStr, String senderName, String userMessage){ 
 		/* Populate our decryption keys using the shared key */
 		if (this.ckey == null || this.ckey.getSharedKey() == null) {
+			this.addChatText("Server: Message received but you are not\n part of the encryption group.\n Please ask to re-encrypt.\n");
 			return;
 		}
 

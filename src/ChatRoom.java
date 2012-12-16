@@ -65,6 +65,10 @@ public class ChatRoom {
 
 	// Tell all the users in the room to begin the conference keying broadcast rounds. 
 	public void encryptRoom() {
+		numZs = 0;
+		zs = null;
+		numXs = 0; 
+		zs = null;
 		distributeMessage("BEGIN_ENC " + this.id + " $ ");
 	}
 	
