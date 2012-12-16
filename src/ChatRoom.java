@@ -125,6 +125,10 @@ public class ChatRoom {
 	public void inviteChatter(Chatter c) {
 		invited.add(c);
 	}
+	
+	public void removeInvite(Chatter c){
+		invited.remove(c);
+	}
 
 	public void removeChatter(Chatter c) {
 		chatters.remove(c);

@@ -11,6 +11,7 @@ public class ClientBufferPusher implements Runnable {
 	
 	private LinkedBlockingQueue<String> writeBuffer;
 	private HashMap<Integer,GUI_ChatInterface> chats;
+	private HashMap<Integer,GUI_Invite> invites;
 	private GUI_Menu menu;
 	private Client client;
 	private boolean kill = false;
@@ -18,6 +19,7 @@ public class ClientBufferPusher implements Runnable {
 	public ClientBufferPusher(Client c){
 		this.writeBuffer = new LinkedBlockingQueue<String>();
 		this.chats = new HashMap<Integer,GUI_ChatInterface>();
+		this.invites = new HashMap<Integer, GUI_Invite>();
 		this.client = c;
 	}
 	
@@ -38,6 +40,10 @@ public class ClientBufferPusher implements Runnable {
 	public void leaveChat(String chat){
 		Integer chatID = Integer.valueOf(chat);
 		chats.remove(chatID);
+	}
+	
+	public void removeInvite(String chat){
+		invites.remove(Integer.valueOf(chat));
 	}
 	
 	private void INVITE(String from){
@@ -80,10 +86,6 @@ public class ClientBufferPusher implements Runnable {
 	}
 	private void CHTR_LEFT(String chat, String user){
 		
-	}
-	
-	private void joinChat(String chat) {
-		client.sendMessage(("JOIN " + chat + " $ ").toCharArray());
 	}
 
 	private void handleMessage(String message){
@@ -145,13 +147,16 @@ public class ClientBufferPusher implements Runnable {
 					return;
 				}
 				// maybe throw up an accept dialog here?
-				if (!chats.containsKey(Integer.valueOf(args[2]))) {
-					joinChat(args[2]);
+				if (!chats.containsKey(Integer.valueOf(args[2])) && !invites.containsKey(Integer.valueOf(args[2]))) {
+					invites.put(Integer.valueOf(args[2]), new GUI_Invite(args[1],args[2],client,this));
+					invites.get(Integer.valueOf(args[2])).setVisible(true);
+					System.out.println("here");
 				}
 			} else if (command.equals("JOINED")) {
 				newChat(args[1]);
 				GUI_ChatInterface gci = chats.get(Integer.valueOf(args[1]));
 				gci.notOwner();
+				invites.remove(Integer.valueOf(args[1]));
 			} else if  (command.equals("KICK")){
 				if (args.length < 3) {
 					return;

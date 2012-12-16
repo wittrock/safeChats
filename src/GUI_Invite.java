@@ -8,18 +8,30 @@ import java.awt.event.ActionEvent;
 
 public class GUI_Invite extends JFrame {
 	
+	Client client;
+	ClientBufferPusher cbp;
+	String chat;
+	
 	public void acceptInvite(){
-		
+		client.sendMessage(("JOIN " + chat + " true$ ").toCharArray());
+		cbp.removeInvite(chat);
+		dispose();
 	}
 	
 	public void rejectInvite(){
-		
+		client.sendMessage(("JOIN " + chat + " false$ ").toCharArray());
+		cbp.removeInvite(chat);
+		dispose();
 	}
 	
-	public GUI_Invite(String userName) {
-		setSize(new Dimension(220, 155));
+	public GUI_Invite(String userName, String chat, Client client, ClientBufferPusher cbp) {
+		setSize(new Dimension(247, 155));
 		setResizable(false);
 		getContentPane().setLayout(null);
+		
+		this.client = client;
+		this.cbp = cbp;
+		this.chat = chat;
 		
 		JLabel lblYouHaveReceived = new JLabel("You have received an Invitation from:");
 		lblYouHaveReceived.setBounds(10, 24, 192, 14);
@@ -32,6 +44,7 @@ public class GUI_Invite extends JFrame {
 		JButton btnAccept = new JButton("Accept");
 		btnAccept.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				acceptInvite();
 			}
 		});
 		btnAccept.setBounds(10, 66, 89, 23);
@@ -40,6 +53,7 @@ public class GUI_Invite extends JFrame {
 		JButton btnReject = new JButton("Reject");
 		btnReject.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				rejectInvite();
 			}
 		});
 		btnReject.setBounds(109, 66, 89, 23);

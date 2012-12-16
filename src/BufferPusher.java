@@ -213,14 +213,18 @@ public class BufferPusher extends Thread {
 					c.addMessage("" + String.valueOf(protocol) + " $ ");
 					
 				} else if (command.equals("JOIN")) {
-					if (numArgs < 2) {
+					if (numArgs < 3) {
 						continue;
 					}
 				
 					String roomId = String.valueOf(args[1]);
+					boolean accept = Boolean.valueOf(String.valueOf(args[2]));
 					//				Chatter c = server.getChatterByName(invitedChatter);
 					Chatter c = msg.getSender();
 					ChatRoom room = server.getRoomByID(roomId);
+					if(!accept){
+						continue;
+					}
 					if (c == null || room == null || !room.addChatter(c)) {
 						log.error("No invited chatter by that name: " + msg.getSender().getName());
 						continue;
