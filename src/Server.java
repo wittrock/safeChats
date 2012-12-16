@@ -138,8 +138,6 @@ public class Server {
 		}
 	}
 	
-	// This should very much be done with a direct reference for the sake of security.
-	// For now, this will suffice.
 	public void removeChatter(Chatter c) {
 				chatters.remove(c);
 				c.stopAll();

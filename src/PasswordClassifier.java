@@ -1,4 +1,7 @@
 // John Wittrock | wittrock@gwu.edu
+/*
+ * This class is John's homework 3 part 3, with only slight modifications. 
+ */
 
 import java.io.*;
 import java.util.*;

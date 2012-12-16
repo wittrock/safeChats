@@ -1,6 +1,7 @@
 /*
  * John Wittrock, Greg Herpel, 2012
- * Simple class to take a message from a global queue and put it on a local queue to be sent out. 
+ * Simple class to take a message from a global queue and put it on a local queue to be sent out, 
+ * in this case those of the Chatters.
  */
 
 import java.io.*;
