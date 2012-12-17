@@ -47,6 +47,8 @@ public class GUI_ChatInterface extends JFrame {
 	private JButton btnEncrypt;
 	private JPanel ownerPanel;
 	private JButton btnKick;
+	private JButton btnSilence;
+	private JButton btnUnsilence;
 	
 	/* Adds given text to the chat log for this chat. Displays it onscreen.*/
 	public void addChatText(String txt){
@@ -160,10 +162,20 @@ public class GUI_ChatInterface extends JFrame {
 		this.addChatText("" + senderName + ": " + plaintext + "\n");
 	}
 	
+	private void silence(){
+		
+	}
+	
+	private void unsilence(){
+		
+	}
+	
 	public void notOwner(){
 		inviteButton.setEnabled(false);
 		btnKick.setEnabled(false);
 		btnEncrypt.setEnabled(false);
+		btnSilence.setEnabled(false);
+		btnUnsilence.setEnabled(false);
 	}
 	
 	public void sendUserText(){
@@ -268,7 +280,7 @@ public class GUI_ChatInterface extends JFrame {
 		this.chatID = chatID;
 		client = c;
 		Dimension dim = new Dimension(375, 285);
-		this.setSize(new Dimension(385, 312));
+		this.setSize(new Dimension(385, 375));
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 		DisplayMode screen = gd.getDisplayMode();
 		this.setLocation((screen.getWidth()-dim.width)/2, (screen.getHeight()-dim.height)/2);
@@ -283,13 +295,12 @@ public class GUI_ChatInterface extends JFrame {
 				ColumnSpec.decode("center:90px:grow"),},
 			new RowSpec[] {
 				FormFactory.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(113dlu;default):grow"),
+				RowSpec.decode("max(156dlu;default):grow"),
 				FormFactory.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(39dlu;default):grow"),}));
 		
 		JPanel chatterPanel = new JPanel();
 		getContentPane().add(chatterPanel, "4, 1, 1, 3, fill, fill");
-		Dimension d = chatterPanel.getSize();
 		chatterPanel.setLayout(new FormLayout(new ColumnSpec[] {
 				ColumnSpec.decode("75px:grow"),},
 			new RowSpec[] {
@@ -327,6 +338,22 @@ public class GUI_ChatInterface extends JFrame {
 		});
 		btnKick.setBackground(SystemColor.inactiveCaption);
 		ownerPanel.add(btnKick);
+		
+		btnSilence = new JButton("Silence");
+		btnSilence.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				silence();
+			}
+		});
+		ownerPanel.add(btnSilence);
+		
+		btnUnsilence = new JButton("Unsilence");
+		btnUnsilence.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				unsilence();
+			}
+		});
+		ownerPanel.add(btnUnsilence);
 		inviteButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent arg0){
 					inviteUser();
