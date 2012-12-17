@@ -12,6 +12,7 @@ public class ChatRoom {
 	
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
 	private List<Chatter> invited;
+	private List<Chatter> silenced;
 	
 	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out. 
 	private int id;
@@ -26,6 +27,7 @@ public class ChatRoom {
 	public ChatRoom(int id, Chatter owner) {
 		this.chatters = Collections.synchronizedList(new ArrayList<Chatter>());
 		this.invited = Collections.synchronizedList(new ArrayList<Chatter>());
+		this.silenced = Collections.synchronizedList(new ArrayList<Chatter>());
 		this.owner = owner;
 		this.id = id;
 		this.zs = null;
@@ -136,6 +138,18 @@ public class ChatRoom {
 			}
 		}
 		
+	}
+
+	public void silenceChatter(Chatter c) {
+		silenced.add(c);
+	}
+
+	public void unsilenceChatter(Chatter c) { 
+		silenced.remove(c);
+	}
+
+	public boolean isSilenced(Chatter c) {
+		return silenced.contains(c);
 	}
 
 	public void inviteChatter(Chatter c) {

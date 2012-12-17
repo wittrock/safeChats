@@ -173,6 +173,11 @@ public class BufferPusher extends Thread {
 						//invalid room. Log here?
 						continue;
 					}
+					
+					if (room.isSilenced(sender)) {
+						sender.addMessage("MSG " + roomID + " $" + "Server: you have been silenced in this room. Whoops.\n");
+						continue;
+					}
 
 					// We know now that the sender is authorized to send to this room.
 
@@ -324,7 +329,7 @@ public class BufferPusher extends Thread {
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
-					if (!c.equals(room.getOwner)) continue;
+					if (!c.equals(room.getOwner())) continue;
 					room.encryptRoom();
 
 				} else if (command.equals("Z")) {
@@ -354,8 +359,39 @@ public class BufferPusher extends Thread {
 						server.sendToAll("USR_LEFT " + c.getName() + "$ ");
 					else
 						server.sendToAll("USR_ADDED " + c.getName() + "$ ");
-				}
-				else {
+				} else if (command.equals("SILENCE")) {
+					String roomId = String.valueOf(args[1]);
+					ChatRoom room = server.getRoomByID(roomId);
+					Chatter c = msg.getSender();
+					Chatter silencedChatter = server.getChatterByName(new String(args[2]));
+					if (room == null 
+					    || !room.containsChatter(c) 
+					    || !room.getOwner().equals(c)
+					    || silencedChatter == null
+					    || !room.containsChatter(silencedChatter)) {
+						continue;
+					}
+					
+					if (!room.isSilenced(silencedChatter)) {
+						room.silenceChatter(silencedChatter);
+					}
+					
+				} else if (command.equals("UNSILENCE")) {
+					String roomId = String.valueOf(args[1]);
+					ChatRoom room = server.getRoomByID(roomId);
+					Chatter c = msg.getSender();
+					Chatter silencedChatter = server.getChatterByName(new String(args[2]));
+					if (room == null 
+					    || !room.containsChatter(c) 
+					    || !room.getOwner().equals(c)
+					    || silencedChatter == null
+					    || !room.containsChatter(silencedChatter)) continue;
+					
+					if (room.isSilenced(silencedChatter)) {
+						room.unsilenceChatter(silencedChatter);
+					}
+
+				} else {
 					//toss out the whole thing. we should add logging here.
 					continue;
 				}
