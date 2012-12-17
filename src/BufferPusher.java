@@ -320,12 +320,11 @@ public class BufferPusher extends Thread {
 
 				} else if (command.equals("ENCRYPT")) {
 					/* When a user wants to encrypt their chat room */
-					/* Do authorization here. */
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
 					if (room == null || !room.containsChatter(c)) continue;
-					
+					if (!c.equals(room.getOwner)) continue;
 					room.encryptRoom();
 
 				} else if (command.equals("Z")) {
