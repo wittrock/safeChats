@@ -253,7 +253,7 @@ public class BufferPusher extends Thread {
 
 					room.inviteChatter(c);
 					// forward on the invite message.
-					c.addMessage("" + String.valueOf(protocol) + " $ ");
+					c.addMessage("" + String.valueOf(protocol) + " " + msg.getSender().getName() + " $ ");
 
 				} else if (command.equals("KICK")){
 					
