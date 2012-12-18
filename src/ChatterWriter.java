@@ -52,7 +52,7 @@ public class ChatterWriter extends ChatterHandler {
 			/* Get a message from the queue, write it to the socket. */
 			while(true && this.running) {
 				str = writeBuffer.take();
-				log.trace(chatter.getName()+": sending a message to");
+				log.trace(chatter.getName()+": sending a "+getCommand(str)+ " message to");
 				w.write(str + '\n');
 				w.flush();
 			}
@@ -61,5 +61,10 @@ public class ChatterWriter extends ChatterHandler {
 			e.printStackTrace();
 			return;
 		}
+	}
+	
+	public String getCommand(String message){
+		String[] args = message.split(" ");
+		return args[0];
 	}
 }

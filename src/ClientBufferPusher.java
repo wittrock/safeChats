@@ -160,9 +160,8 @@ public class ClientBufferPusher implements Runnable {
 				}
 				// maybe throw up an accept dialog here?
 				if (!chats.containsKey(Integer.valueOf(args[2])) && !invites.containsKey(Integer.valueOf(args[2]))) {
-					invites.put(Integer.valueOf(args[2]), new GUI_Invite(args[1],args[2],client,this));
+					invites.put(Integer.valueOf(args[2]), new GUI_Invite(args[3],args[2],client,this));
 					invites.get(Integer.valueOf(args[2])).setVisible(true);
-					System.out.println("here");
 				}
 			} else if (command.equals("JOINED")) {
 				newChat(args[1]);

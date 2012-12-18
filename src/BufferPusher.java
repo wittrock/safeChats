@@ -162,7 +162,9 @@ public class BufferPusher extends Thread {
 					 * The user message is then a concatenation of MAC, IV, and encrypted message, 
 					 * in base 64, which then has to be converted back to bytes and stripped apart. 
 					 */
-
+					
+					log.trace(msg.getSender().getName()+": Sent a message to room " + String.valueOf(args[1]));
+					
 					if (numArgs < 2) {
 						//incorrectly formatted message. Log here?
 						log.warn("Incorrectly formatted MSG command from " + msg.getSender().getName());
@@ -187,7 +189,6 @@ public class BufferPusher extends Thread {
 
 					if (numArgs == 2) {
 						// non-encrypted message
-						System.out.println("Got non-encrypted message");
 						String annotatedMsg = "MSG " + roomID + " $ "  + sender.getName() + ": " + String.valueOf(userMessage);
 
 						System.out.println("User message: " + new String(userMessage));
@@ -203,14 +204,12 @@ public class BufferPusher extends Thread {
 						 * args[4] will be the sender's id name, since we can't prepend it to the 
 						 *         message anymore. 
 						 */
-						System.out.println("Got encrypted message");
 						String annotatedMsg = "MSG " + 
 							roomID + " " + 
 							String.valueOf(args[2]) + " " +
 							String.valueOf(args[3]) + " " + 
 							sender.getName() + // this will be the iv. 
 							" $ " + String.valueOf(userMessage);
-						System.out.println("Forwarding annotated Message: " + annotatedMsg);
 						room.distributeMessage(annotatedMsg);
 
 					} else {
@@ -226,6 +225,8 @@ public class BufferPusher extends Thread {
 					 * args[2] = the roomId
 					 */
 					
+					log.trace(msg.getSender().getName()+": Invited "+ String.valueOf(args[1])+ " to room" + String.valueOf(args[2]));
+					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
 						log.warn("Incorrectly formatted INVITE command from " + msg.getSender().getName());
 						continue; // invalid invite message. Log here?
@@ -234,7 +235,7 @@ public class BufferPusher extends Thread {
 					String invitedChatter = String.valueOf(args[1]);
 					String roomId = String.valueOf(args[2]);
 					Chatter c = server.getChatterByName(invitedChatter);
-					if (c == null) {
+					if (c == null || !c.isAuthenticated()) {
 						// send a failure message here. 
 						String inviteFailure = "INVITE_FAILED " + String.valueOf(args[1]) + " $ ";
 						msg.getSender().addMessage(inviteFailure);
@@ -252,18 +253,28 @@ public class BufferPusher extends Thread {
 
 					room.inviteChatter(c);
 					// forward on the invite message.
-					c.addMessage("" + String.valueOf(protocol) + " $ ");
+					c.addMessage("" + String.valueOf(protocol) + " " + msg.getSender().getName() + " $ ");
 
 				} else if (command.equals("KICK")){
+					
+					/* Kick command from a client. 
+					 * Format:
+					 * args[1] = the kicked chatter, by name.
+					 * args[2] = the roomId
+					 */
+					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
 						log.warn("Invalid KICK command from " + msg.getSender().getName());
 						continue; // invalid invite message. Log here?
 					}
 					
+					log.error(msg.getSender().getName()+": Kick message had errors");
+					
 					String kickedChatter = String.valueOf(args[1]);
 					String roomId = String.valueOf(args[2]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = server.getChatterByName(kickedChatter);
+
 					if (c == null || room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || !room.containsChatter(c)) {
 						log.warn("Invalid KICK command from " + msg.getSender().getName());
 						continue;

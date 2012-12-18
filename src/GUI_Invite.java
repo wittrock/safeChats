@@ -25,7 +25,8 @@ public class GUI_Invite extends JFrame {
 	}
 	
 	public GUI_Invite(String userName, String chat, Client client, ClientBufferPusher cbp) {
-		setSize(new Dimension(247, 155));
+		getContentPane().setSize(new Dimension(241, 155));
+		setSize(new Dimension(249, 155));
 		setResizable(false);
 		getContentPane().setLayout(null);
 		
@@ -34,7 +35,7 @@ public class GUI_Invite extends JFrame {
 		this.chat = chat;
 		
 		JLabel lblYouHaveReceived = new JLabel("You have received an Invitation from:");
-		lblYouHaveReceived.setBounds(10, 24, 192, 14);
+		lblYouHaveReceived.setBounds(10, 24, 223, 14);
 		getContentPane().add(lblYouHaveReceived);
 		
 		JLabel label = new JLabel(userName);
