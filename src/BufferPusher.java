@@ -143,6 +143,10 @@ public class BufferPusher extends Thread {
 
 				/* Create chat room */
 				if (command.equals("CREATE")) {
+					//authorize user if they are authenticated
+					if(!msg.getSender().isAuthenticated())
+						continue;
+					
 					log.trace("Sending create command to " + msg.getSender().getName());
 					server.createRoom(msg.getSender());
 					continue;
@@ -163,6 +167,7 @@ public class BufferPusher extends Thread {
 					 * in base 64, which then has to be converted back to bytes and stripped apart. 
 					 */
 					
+					
 					log.trace(msg.getSender().getName()+": Sent a message to room " + String.valueOf(args[1]));
 					
 					if (numArgs < 2) {
@@ -176,6 +181,7 @@ public class BufferPusher extends Thread {
 					ChatRoom room = server.getRoomByID(roomID);
 					if (room == null || !room.containsChatter(sender)) {
 						//invalid room. Log here?
+						log.warn("room "+roomID+" doesn't exist or "+sender+" is not allowed in the room");
 						continue;
 					}
 					
@@ -245,7 +251,7 @@ public class BufferPusher extends Thread {
 				
 					// check that the sender is actually in the room. 
 					ChatRoom room = server.getRoomByID(roomId);
-					if (room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || room.containsChatter(c)) {
+					if (room == null || !room.getOwner().equals(msg.getSender()) || room.containsChatter(c)) {
 						// invalid room. will consider sending a different failure message here.
 						log.warn("INVITE command from " + msg.getSender().getName() + " to invalid room " + roomId);
 						continue;
@@ -275,7 +281,7 @@ public class BufferPusher extends Thread {
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = server.getChatterByName(kickedChatter);
 
-					if (c == null || room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || !room.containsChatter(c)) {
+					if (c == null || room == null || !room.getOwner().equals(msg.getSender()) || !room.containsChatter(c)) {
 						log.warn("Invalid KICK command from " + msg.getSender().getName());
 						continue;
 					}
@@ -286,6 +292,7 @@ public class BufferPusher extends Thread {
 				} else if (command.equals("JOIN")) {
 					/* Join command from a client to the server. Format:
 					 * args[1] = the roomID.
+					 * args[2] = Accept(true) or Reject(false)
 					 * This also checks that the user has actually been invited and is authorized to join. 
 					 */
 

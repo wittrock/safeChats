@@ -344,6 +344,7 @@ public class GUI_ChatInterface extends JFrame {
 		ownerPanel.add(btnKick);
 		
 		btnSilence = new JButton("Silence");
+		btnSilence.setBackground(SystemColor.inactiveCaption);
 		btnSilence.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				silence();
@@ -352,6 +353,7 @@ public class GUI_ChatInterface extends JFrame {
 		ownerPanel.add(btnSilence);
 		
 		btnUnsilence = new JButton("Unsilence");
+		btnUnsilence.setBackground(SystemColor.inactiveCaption);
 		btnUnsilence.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				unsilence();

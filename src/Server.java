@@ -151,6 +151,7 @@ public class Server {
 	}
 
 	public void createRoom(Chatter owner) {
+		
 		int roomId;
 		while(true) {
 			roomId = random.nextInt();
