@@ -22,7 +22,7 @@ public class ConferenceKey {
 
 	public static final BigInteger DEFAULT_GENERATOR = BigInteger.valueOf(2);
 
-	private static SecureRandom random;
+	private SecureRandom random;
 
 	private BigInteger modulus;
 	private BigInteger generator;
