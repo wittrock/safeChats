@@ -163,11 +163,15 @@ public class GUI_ChatInterface extends JFrame {
 	}
 	
 	private void silence(){
-		
+		String silenceStr = inviteField.getText();
+		if (silenceStr.length() <= 0) return;
+		client.sendMessage(("SILENCE " + chatID + " " + silenceStr + " $ ").toCharArray());
 	}
 	
 	private void unsilence(){
-		
+		String silenceStr = inviteField.getText();
+		if (silenceStr.length() <= 0) return;
+		client.sendMessage(("UNSILENCE " + chatID + " " + silenceStr + " $ ").toCharArray());
 	}
 	
 	public void notOwner(){

@@ -120,8 +120,10 @@ public class BufferPusher extends Thread {
 				int protocolEnd = indexOf(str,'$',0);
 				int msgStart = protocolEnd +1;
 				if (protocolEnd == -1) {
+					log.warn("Invalid message from " + msg.getSender().getName());
 					// Toss this out. 
 					continue;
+
 				}
 			
 				/* Make sure we parsed this correctly and we don't have an extra space at the end */
@@ -165,6 +167,7 @@ public class BufferPusher extends Thread {
 					
 					if (numArgs < 2) {
 						//incorrectly formatted message. Log here?
+						log.warn("Incorrectly formatted MSG command from " + msg.getSender().getName());
 						continue;//toss.
 					}
 
@@ -173,6 +176,12 @@ public class BufferPusher extends Thread {
 					ChatRoom room = server.getRoomByID(roomID);
 					if (room == null || !room.containsChatter(sender)) {
 						//invalid room. Log here?
+						continue;
+					}
+					
+					if (room.isSilenced(sender)) {
+						sender.addMessage("MSG " + roomID + " $" + "Server: you have been silenced in this room. Whoops.\n");
+						log.trace("Message from a silenced sender in room: " + roomID + ": " + msg.getSender().getName());
 						continue;
 					}
 
@@ -204,6 +213,7 @@ public class BufferPusher extends Thread {
 						room.distributeMessage(annotatedMsg);
 
 					} else {
+						log.warn("Incorrectly formatted MSG command from " + msg.getSender().getName());
 						continue;
 					}
 
@@ -218,6 +228,7 @@ public class BufferPusher extends Thread {
 					log.trace(msg.getSender().getName()+": Invited "+ String.valueOf(args[1])+ "to room" + String.valueOf(args[2]));
 					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
+						log.warn("Incorrectly formatted INVITE command from " + msg.getSender().getName());
 						continue; // invalid invite message. Log here?
 					}
 
@@ -226,9 +237,9 @@ public class BufferPusher extends Thread {
 					Chatter c = server.getChatterByName(invitedChatter);
 					if (c == null) {
 						// send a failure message here. 
-						log.error(msg.getSender().getName()+": Invited chatter unknown or not authenticated");
-						//String inviteFailure = "INVITE_FAILED " + String.valueOf(args[1]) + " $ ";
-						//msg.getSender().addMessage(inviteFailure);
+						String inviteFailure = "INVITE_FAILED " + String.valueOf(args[1]) + " $ ";
+						msg.getSender().addMessage(inviteFailure);
+						log.warn("INVITE command to non logged-in chatter " + invitedChatter + " from " + msg.getSender().getName());
 						continue;
 					}
 				
@@ -236,7 +247,7 @@ public class BufferPusher extends Thread {
 					ChatRoom room = server.getRoomByID(roomId);
 					if (room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || room.containsChatter(c)) {
 						// invalid room. will consider sending a different failure message here.
-						log.error(msg.getSender().getName()+": Invite constraints not met");
+						log.warn("INVITE command from " + msg.getSender().getName() + " to invalid room " + roomId);
 						continue;
 					}
 
@@ -253,6 +264,7 @@ public class BufferPusher extends Thread {
 					 */
 					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
+						log.warn("Invalid KICK command from " + msg.getSender().getName());
 						continue; // invalid invite message. Log here?
 					}
 					
@@ -262,11 +274,11 @@ public class BufferPusher extends Thread {
 					String roomId = String.valueOf(args[2]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = server.getChatterByName(kickedChatter);
-					if (c == null || room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || !room.containsChatter(c)){
-						log.error(msg.getSender().getName()+": Kick message had errors");
+
+					if (c == null || room == null || !room.getOwner().getName().equals(msg.getSender().getName()) || !room.containsChatter(c)) {
+						log.warn("Invalid KICK command from " + msg.getSender().getName());
 						continue;
 					}
-					
 					room.removeChatter(c);
 					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + roomId + " $ ");
 					c.addMessage("" + String.valueOf(protocol) + " $ ");
@@ -278,6 +290,7 @@ public class BufferPusher extends Thread {
 					 */
 
 					if (numArgs < 3) {
+						log.warn("Invalid JOIN command from " + msg.getSender().getName());
 						continue;
 					}
 				
@@ -334,12 +347,17 @@ public class BufferPusher extends Thread {
 
 				} else if (command.equals("ENCRYPT")) {
 					/* When a user wants to encrypt their chat room */
-					/* Do authorization here. */
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
-					if (room == null || !room.containsChatter(c)) continue;
-					
+					if (room == null || !room.containsChatter(c)) {
+						log.warn("Invalid ENCRYPT message from " + msg.getSender().getName());
+						continue;
+					}
+					if (!c.equals(room.getOwner())) {
+						log.warn("ENCRYPT message from non-owner " + msg.getSender().getName());
+						continue;
+					}
 					room.encryptRoom();
 
 				} else if (command.equals("Z")) {
@@ -348,7 +366,10 @@ public class BufferPusher extends Thread {
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
-					if (room == null || !room.containsChatter(c)) continue;
+					if (room == null || !room.containsChatter(c)) {
+						log.warn("Invalid Z command from " + msg.getSender().getName());
+						continue;
+					}
 
 					room.addZ(c, String.valueOf(args[2]));
 					
@@ -357,7 +378,10 @@ public class BufferPusher extends Thread {
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);
 					Chatter c = msg.getSender();
-					if (room == null || !room.containsChatter(c)) continue;
+					if (room == null || !room.containsChatter(c)) {
+						log.warn("Invalid X command from " + msg.getSender().getName());
+						continue;
+					}
 					
 					room.addX(c, String.valueOf(args[2]));
 
@@ -369,9 +393,45 @@ public class BufferPusher extends Thread {
 						server.sendToAll("USR_LEFT " + c.getName() + "$ ");
 					else
 						server.sendToAll("USR_ADDED " + c.getName() + "$ ");
-				}
-				else {
-					//toss out the whole thing. we should add logging here.
+				} else if (command.equals("SILENCE")) {
+					String roomId = String.valueOf(args[1]);
+					ChatRoom room = server.getRoomByID(roomId);
+					Chatter c = msg.getSender();
+					Chatter silencedChatter = server.getChatterByName(new String(args[2]));
+					if (room == null 
+					    || !room.containsChatter(c) 
+					    || !room.getOwner().equals(c)
+					    || silencedChatter == null
+					    || !room.containsChatter(silencedChatter)) {
+						log.warn("Invalid SILENCE command in room " + roomId + " from " + msg.getSender().getName());
+						continue;
+					}
+					
+					if (!room.isSilenced(silencedChatter)) {
+						room.silenceChatter(silencedChatter);
+					}
+					
+				} else if (command.equals("UNSILENCE")) {
+					String roomId = String.valueOf(args[1]);
+					ChatRoom room = server.getRoomByID(roomId);
+					Chatter c = msg.getSender();
+					Chatter silencedChatter = server.getChatterByName(new String(args[2]));
+					if (room == null 
+					    || !room.containsChatter(c) 
+					    || !room.getOwner().equals(c)
+					    || silencedChatter == null
+					    || !room.containsChatter(silencedChatter)) {
+						log.warn("Invalid UNSILENCE command in room " + roomId + " from " + msg.getSender().getName());
+						continue;
+					}
+					
+					if (room.isSilenced(silencedChatter)) {
+						room.unsilenceChatter(silencedChatter);
+					}
+
+				} else {
+					//toss the whole thing.
+					log.warn("Non-recognized command from " + msg.getSender().getName());
 					continue;
 				}
 			} catch (Exception e) {
