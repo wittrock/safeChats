@@ -225,7 +225,7 @@ public class BufferPusher extends Thread {
 					 * args[2] = the roomId
 					 */
 					
-					log.trace(msg.getSender().getName()+": Invited "+ String.valueOf(args[1])+ "to room" + String.valueOf(args[2]));
+					log.trace(msg.getSender().getName()+": Invited "+ String.valueOf(args[1])+ " to room" + String.valueOf(args[2]));
 					
 					if(numArgs < 3 || countChar(str, '$') > 1) {
 						log.warn("Incorrectly formatted INVITE command from " + msg.getSender().getName());
@@ -235,7 +235,7 @@ public class BufferPusher extends Thread {
 					String invitedChatter = String.valueOf(args[1]);
 					String roomId = String.valueOf(args[2]);
 					Chatter c = server.getChatterByName(invitedChatter);
-					if (c == null) {
+					if (c == null || !c.isAuthenticated()) {
 						// send a failure message here. 
 						String inviteFailure = "INVITE_FAILED " + String.valueOf(args[1]) + " $ ";
 						msg.getSender().addMessage(inviteFailure);
