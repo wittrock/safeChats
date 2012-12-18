@@ -97,7 +97,7 @@ public class ChatRoom {
 				}
 
 				chatter.addMessage("ZS " + this.id + " " + zs[lIndex] + " " + zs[rIndex] + " $ ");
-				System.out.println("Sent zs to " + c.getName());
+				log.trace("Sent zs to " + c.getName());
 			}
 		}
 	}
