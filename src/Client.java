@@ -106,6 +106,7 @@ public class Client {
 		sendMessage(("CREATE$ ").toCharArray());
 	}
 	
+	//concatinates the elements of the auth or newAcc message and zeros out the string buffer
 	public void authUser(String userName, char[] password) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("AUTH "+userName+" ");
@@ -152,6 +153,7 @@ public class Client {
 		cml.killProc();
 	}
 	
+	//method used to send all message from the client
 	public synchronized void sendMessage(char[] str){
 		try{
 			typedWriter.write(str, 0, str.length);

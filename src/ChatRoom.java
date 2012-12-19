@@ -3,7 +3,6 @@
  */
 
 import java.util.*;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -13,8 +12,6 @@ public class ChatRoom {
 	private List<Chatter> chatters; // A list of all the chatters in this simplistic, one-room chat system.
 	private List<Chatter> invited;
 	private List<Chatter> silenced;
-	
-	private LinkedBlockingQueue<String> writeBuffer; // All of the messages to be sent out. 
 	private int id;
 	private Chatter owner;
 	private Logger log;

@@ -2,7 +2,7 @@
  * This is a utility class for general crypto routines. 
  */
 
-import java.io.*;
+
 import java.util.*;
 import java.security.*;
 import javax.crypto.*;

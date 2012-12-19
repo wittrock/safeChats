@@ -29,11 +29,6 @@ public class ClientBufferPusher implements Runnable {
 	}
 	
 	
-	private void printMessage(String message, String chat){
-		Integer chatID = Integer.valueOf(chat);
-		GUI_ChatInterface gci = chats.get(chatID);
-		gci.addChatText(message);
-	}
 	
 	private void newChat(String chat){
 		Integer chatID = Integer.valueOf(chat);
@@ -51,9 +46,6 @@ public class ClientBufferPusher implements Runnable {
 		invites.remove(Integer.valueOf(chat));
 	}
 	
-	private void INVITE(String from){
-		//add a GUI to ask if user wants to accept an invite from "from"
-	}
 	
 	private void AUTH(String bool){
 		boolean authed = Boolean.valueOf(bool);
@@ -84,13 +76,6 @@ public class ClientBufferPusher implements Runnable {
 	private void USR_LEFT( String user){
 		if (menu == null) return;
 		menu.removeUser(user);
-	}
-	
-	private void CHTR_ADDED(String chat, String user){
-		
-	}
-	private void CHTR_LEFT(String chat, String user){
-		
 	}
 
 	/* Protocol messages are arranged as follows:
@@ -149,13 +134,24 @@ public class ClientBufferPusher implements Runnable {
 				ci.addChatText(userMessage);
 
 			} else if (command.equals("AUTH")){
+				/* sent in response to an auth message that was sent correctly, the format is:
+				 * args[1] Authenticated(true) or not authenticated (false)
+				 */
 				String bool = args[1];
 				AUTH(bool);
 			} else if (command.equals("NEW_ACC")){
+				/* sent in response to an new_acc message that was sent correctly, the format is:
+				 * args[1] Account Created(true) or Account Not Created (false)
+				 */
 				String bool = args[1];
 				NEW_ACC(bool);
 			} else if (command.equals("INVITE")) {
-				if (args.length < 3) {
+				/* An invite sent by an owner of a chat room, the format is:
+				 * args[1] this person's user name
+				 * args[2] the chat room id
+				 * args[3] the name of the user who sent the invite
+				 */
+				if (args.length < 4) {
 					return;
 				}
 				// maybe throw up an accept dialog here?
@@ -164,11 +160,18 @@ public class ClientBufferPusher implements Runnable {
 					invites.get(Integer.valueOf(args[2])).setVisible(true);
 				}
 			} else if (command.equals("JOINED")) {
+				/* sent if user was successfully added to a chat, the format is:
+				 * args[1] is the roomID 
+				 */
 				newChat(args[1]);
 				GUI_ChatInterface gci = chats.get(Integer.valueOf(args[1]));
 				gci.notOwner();
 				invites.remove(Integer.valueOf(args[1]));
 			} else if  (command.equals("KICK")){
+				/* sent to kick this user from a chat, the format is:
+				 * args[1] this user's name
+				 * args[2] the roomID
+				 */
 				if (args.length < 3) {
 					return;
 				}
@@ -177,6 +180,10 @@ public class ClientBufferPusher implements Runnable {
 				GUI_KickNotice gkn = new GUI_KickNotice(args[2]);
 				gkn.setVisible(true);
 			}else if (command.equals("CHTR_ADDED")) {
+				/* add a chatter's name to the list of chat room contacts, the format is:
+				 * args[1] chatter name added
+				 * args[2] roomID
+				 */
 				String chatter = args[1];
 				int roomId = Integer.valueOf(args[2]);
 				GUI_ChatInterface ci = chats.get(roomId);
@@ -184,14 +191,24 @@ public class ClientBufferPusher implements Runnable {
 				ci.addChatter(chatter);
 
 			} else if (command.equals("CHTR_LEFT")) {
+				/* remove a chatter's name from the list of chat room contacts, the format is:
+				 * args[1] chatter name being removed
+				 * args[2] roomID
+				 */
 				String chatter = args[1];
 				int roomId = Integer.valueOf(args[2]);
 				GUI_ChatInterface ci = chats.get(roomId);
 				if (ci == null) { return; }
 				ci.removeChatter(chatter);
 			} else if (command.equals("USR_ADDED")){
+				/* add a user to the menu list, the format is:
+				 * args[1] user name
+				 * */
 				USR_ADDED(args[1]);
 			} else if (command.equals("USR_LEFT")){
+				/* remove user from menu list, the format is:
+				 * args[1] user name
+				 */
 				USR_LEFT(args[1]);
 
 			} else if (command.equals("BEGIN_ENC")) {

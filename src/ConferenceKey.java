@@ -3,8 +3,6 @@
  * An explanation can be found at http://www.scribd.com/doc/2979523/7/Conference-keying
  */
 
-import java.io.*;
-import java.util.*;
 import java.math.BigInteger;
 import java.security.*;
 
