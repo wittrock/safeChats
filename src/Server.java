@@ -133,7 +133,14 @@ public class Server {
 		for(ChatRoom room:rooms.values()){
 			if(room.containsChatter(c)){
 				room.removeChatter(c);
-				room.distributeMessage("CHTR_LEFT " + c.getName() + " " + room.getID() + " $ ");
+				if (room.size() == 0 || c.equals(room.getOwner())) {
+					room.distributeMessage("RM_DESTROYED " + room.getID() + " $ ");									       // actually remove the room. 
+					this.removeRoom(room.getID());
+					log.trace("Room destroyed: " + room.getID());
+				} else {
+					room.distributeMessage("CHTR_LEFT " + c.getName() + " " + room.getID() + " $ ");
+				}
+
 			}
 		}
 	}
