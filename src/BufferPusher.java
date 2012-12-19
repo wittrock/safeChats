@@ -396,10 +396,14 @@ public class BufferPusher extends Thread {
 					/* When a user wants to hide themselves from user lists */
 					boolean bool = Boolean.valueOf(String.valueOf(args[1]));
 					Chatter c = msg.getSender();
-					if(bool)
+					if(bool){
 						server.sendToAll("USR_LEFT " + c.getName() + "$ ");
-					else
+						c.setHidden(true);
+					}
+					else{
 						server.sendToAll("USR_ADDED " + c.getName() + "$ ");
+						c.setHidden(false);
+					}
 				} else if (command.equals("SILENCE")) {
 					String roomId = String.valueOf(args[1]);
 					ChatRoom room = server.getRoomByID(roomId);

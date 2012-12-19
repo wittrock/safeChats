@@ -290,7 +290,7 @@ public class Server {
 	}
 	public void sendAllNames(Chatter c){
 		for(Chatter chat: chatters){
-			if(chat.isAuthenticated())
+			if(chat.isAuthenticated() && !chat.isHidden())
 				c.addMessage("USR_ADDED "+chat.getName()+"$ ");
 		}
 	}

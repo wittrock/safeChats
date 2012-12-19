@@ -9,6 +9,7 @@ import org.apache.log4j.PropertyConfigurator;
 public class Chatter {
 	protected String name;
 	private boolean authenticated;
+	private boolean hidden;
 	//add list of rooms here later.
 	ChatterWriter writer = null;
 	ChatterReader reader = null;
@@ -58,10 +59,19 @@ public class Chatter {
 	public void authUser(){
 		authenticated = true;
 	}
+	
+	public boolean isHidden(){
+		return hidden;
+	}
+	
+	public void setHidden(boolean f){
+		hidden = f;
+	}
 
 	public Chatter(String name) {
 		this.name = name;
 		this.authenticated = false;
+		this.hidden = false;
 		log = Logger.getLogger(Chatter.class);
 		PropertyConfigurator.configure("log4j.properties");
 		log.trace("Started a new Chatter " + name);
