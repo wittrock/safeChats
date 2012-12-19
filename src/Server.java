@@ -305,6 +305,8 @@ public class Server {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 	
